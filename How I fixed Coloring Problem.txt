@@ -1,0 +1,32 @@
+date: 15.9.23
+
+The console applications made with byte blitz can display colorful pictures as well as
+black and white pictures.
+
+The issue:-
+
+To display colorful image a binary file, color.data is used. It contains the data necessary
+for showing colors. It is loaded at runtime by the console applications made with byte blitz.
+And to load it the application must be in the same folder as the color.data file. This is a
+huge limitation as whenever we make an application in a folder we need to copy color.data
+in that folder. Thus color.data is colpied to multiple folders. This is not good if the
+application is made only for testing.
+
+If the application fails to find color.data it will display black and white image.
+
+The fix:-
+
+color.data file is kept in graphics subfolder.
+
+A new macro called PATH is defined in posfun.h, which gives the absolute path to the byte blitz
+folder.
+
+Each of draw.h has a macro COLOR_PATH which calculates the path to color.data using PATH macro.
+
+Thus the console applications made with byte blitz normally access this color.data in the graphics
+subdirectory while running.
+
+Now, if you want to access color.data file from some different folder (say, the folder that contains
+.exe file) you can define COLOR_PATH macro with a new path to a directory (this path can be a relative
+path wrt the folder where the .exe file resides) containing color.data before including any draw.h
+header file.

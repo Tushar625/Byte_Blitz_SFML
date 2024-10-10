@@ -1,0 +1,40 @@
+
+graphics2d_base.h update plane:
+--------------------
+
+{**}
+
+(
+	note:
+	
+	for now filling can be solid color (current color) Only, which is also default filling in future
+	we may add texture or gradient filling options. For this we will keep functions like:
+	
+	set_filling_texture();
+	set_filling_gradient();
+
+	or we may create different object for texture or gradient and pass them to set_filling()
+
+	use_default_filling();	// sets the system to use default filling or solid color
+
+	For now I don't now how to get these textures so no exta functions related to filling.
+)
+
+{*}
+
+***** This idea is a garbage *****
+
+Standard macro (charb, stringb, path) and structures (RGB coord2d) must be put into a seperate
+header files instead of multiple small header files.
+
+Why this idea is a garbage?
+
+Because we want to keep the modules separated but such a file will mix everything up, notice
+how charb, stringb, path, RGB and coord2d all stays together in this header file. When game_loop
+includes it for charb stringb it accedentally include all unnecessary stuffs, that's considered
+to be a bad stuff in modular design. Also if we want to extract the game_loop header file from
+the game engine we need to extract a copy of the header files attached to it also and it won't
+look good if the header file has unnecessary useless stuffs it.
+
+last reason is that what this header file will contain are fundamentally different things so it
+makes no sense to keep them together and it will be difficult to upgrade also.

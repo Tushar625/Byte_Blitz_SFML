@@ -1,0 +1,111 @@
+Here we provide a description of the (Byte_Blitz1) game engine:
+
+It is version 1 of the Byte_Blitz game engine.
+
+This game engine is made of several modules that interact with each other to run the game.
+Main advantage of this approach is that each individual module can be upgraded without
+affecting others.
+
+[In this game engine, each folder holds a module so from now on we will use the word “folder”
+instead of “module”]
+
+Before, talking about folders in details I want to mention that entry point of the game engine
+is “game.h” header file in root or Byte_Blitz1 folder; we include all the necessary header
+files in it so, to create a game with this game engine you need to include only this header
+file into the source code (More about its usage is mentioned in the documentation inside it).
+
+[****[We recommand you to use Visual Studio to make games using this game engine. We have found
+that the debugger provided with Visual Studio is very good at detecting Segmentation Faults in
+the application you make, without it Segmentation Faults are very difficult to detect and will
+waste a ton of your time. You don't have to do anything spacial, just run the application with
+debugger after you build it and if any Segmentation Faults occurr debugger will detect it,
+display what is causing it and stop execution of the application]****]
+
+Now we describe each folder:
+
+game_loop:
+
+It holds game_loop.h header file that provides the basic game loop, which is the heart of this
+game engine. game_loop.h contains a class that has the game loop defined in it. The game
+loop can be started by calling a member function. This class must have several virtual functions
+to create, update, render the game which are called by the game loop to run the game. The game
+loop runs at a certain fps, which can be changed using a method in the class. The source code
+of the game is supposed to inherit this class and override the virtual methods to change their
+behaviour as required for the game.
+
+graphics:
+
+It basically holds the header file that contains a general purpose abstract class that defines
+the graphic functions (like, the functions to draw circle, line, ellipse etc) and several pure
+virtual functions whose definitions are platform dependent. This class will not have any platform
+dependent function definitions. This class is the main part of the graphics system of this game
+engine.
+
+This header file is to be inherited by another class defined in a header file in the system folder
+described below, which will define the platform dependent part of this class and complete the
+graphics system of the game engine. For this we keep another header file in graphics folder that
+helps the class in system folder to access proper version of afore said general purpose header file.
+(this second header file will not be included in the published version of this game engine)
+
+button:
+
+It holds a header file that describes a general purpose button and a list of buttons more like a menu
+list. (this header file contains a detailed description of itself)
+
+state_machine:
+
+It holds a header file that describes several general purpose classes to implement an object oriented
+statemachine in a game. (this header file contains a detailed description of itself)
+
+image:
+
+This folder is designed to provide several general purpose classes to load and store different types
+image files. They the used by classes in graphics folder to access image files. (currently we can load
+and save only .bmp 24 bit files) (this folder contains its own manual)
+
+sound:
+
+It was planned to store header files to read sound files, but no work is done on it yet.
+
+utility:
+
+It contains several general purpose header files which are used by all other folders in this game engine.
+
+[
+	Afore said folders are core part of the game engine and they are written in pure c++ i.e., doesn't
+	contain any platform dependent codes.
+
+	Only the system folder mentioned below contains all the platform dependent code used in this game
+	engine and helps to seperate the general purpose codes from the platform dependent ones properly.
+
+	This way to make this game engine work on different platforms we only have to redefine the system
+	folder, rest of the game engine remains same, unaffected.
+]
+
+system:
+
+This is the only platform dependent folder in this game. It defines 3 header files,
+
+one to manipulate the window.
+
+one to defines the output system of this game engine.
+
+last one extends the general purpose graphics system of this game engine, adds some
+platform dependent codes to it and makes it usable.
+
+[
+	At the end i want to mention 2 special purpose folders
+]
+
+examples:
+
+Contains several demo games made with this game engine.
+
+extra:
+
+Contains some header files, with some experimental classes build upon parts of this game engine.
+The header files under this folder are not included in game.h. Hence, to use them you need to
+include them seperately.
+
+The header files in this folder are not considered to be parts of the game engine but they are
+tools made with this game engine.

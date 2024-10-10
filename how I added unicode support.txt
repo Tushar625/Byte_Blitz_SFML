@@ -1,0 +1,25 @@
+in my graphics engine I use "WriteConsoleOutput" macro to draw things on the console screen
+
+now if the constant UNICODE, is defined "WriteConsoleOutput" will expand to "WriteConsoleOutputW()" function
+else it expands to "WriteConsoleOutputA()" function.
+
+
+**** Now the most interesting part is,
+
+"WriteConsoleOutputW()" prints unicode characters on the screen
+
+"WriteConsoleOutputA()" prints ascii characters on the screen
+
+
+**** This was the key, I used; I defined 2 macros
+
+"CHARB" gets wchar_t as its value if UNICODE is defined else, gets char
+"STRINGB" gets wstring as its value if UNICODE is defined else, gets string
+
+this way I used them to write the funtions dependent on unicode or ascii (mostly the functions
+that deals with strings).
+
+
+**** But functions dealing with extened ascii characters use only wchar_t as extended ascii characters are not supproted by char.
+
+Same technique was used with game loop.

@@ -1,0 +1,32 @@
+Date: 15/11/2023
+
+Now a days, I try to remove unnecessary header files, that were previously included into various
+header files under byte blitz game engine
+
+In game loop we have used sprintf()
+
+Confusion:
+
+	Which header file contains sprintf(), and do I need any namespace or not.
+
+Situation:
+
+	iostream and std namespace was included in game_loop.h but they are mostly necessary.
+
+Solution:
+
+	I found we access sprintf() through the following c++ header files, through it actually belongs
+	to stdio.h
+
+		iostream
+		cstdio
+		string
+
+	Here I don't want to include iostream and string, so I used cstdio.
+
+	Now the description of cstdio I read from internet, told that it include sprintf() in std namespace
+	but when I looked at the code of cstdio, I did not find any mension of std namespace, even sprintf()
+	was a part of the global namespace.
+
+	At the end as most of the websites was telling that sprintf is a part of std namespace, I tried
+	std::sprintf() and it worked, so I included cstdio and called std::sprintf() in the final version game3.h

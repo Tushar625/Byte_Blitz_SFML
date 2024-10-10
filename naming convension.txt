@@ -1,0 +1,82 @@
+
+Cause of having a naming convension:
+
+	To make it easy for the user to remember names used in this game engine.
+	To increase readability of the source codes of both the game engine and games made with it.
+
+Follow these rules:
+	
+	Strictly while naming functions, macros, variables etc, in the game engine, which will be used by external users.
+	
+	It is also recommanded to obey them while naming internal variables, functions, macros etc which will not be used
+	by external users, for the sake of readability.
+
+Rules:
+
+	Each name is made of one or more words connected by '_', no. of words must be minimum (eg coord2d, dist2d is better
+	than coord_2d, dist_2d).
+	
+	Cammel case is not allowed, the name can be in either uppercase or lowercase, with a few exception.
+
+	Following things are named in lowercase (generally):
+
+		All variables and objects.
+		All datatype names except classes & enums.
+		Function names.
+		Names of the macros that will be used as funtion names.
+		Header file names.
+
+	Following things are named in uppercase (generally):
+
+		All macros that are not used as functions, and those function like macros whose function counterpart has been
+		defined already.
+		Enum and class names.
+		Enum values.
+		Pre-defined objects (Eg: "COLOR" object in draw.h).
+
+	How two words in a name, can be combined into one (for names of members of classes and structures only):
+
+		Let, "abc_xyz" is a two-word sequence in a name and "abc" can be guessed by the user from a single letter (say "a")
+		with ease, then "abc" should be replaced by single letter and prepended to "xyz", replacing the name "abc_xyz" with
+		"axyz". Similarly, if "xyz" can be guessed easily from "x", we can replace "abc_xyz" with "abcx".
+
+		Note, Usage of this rule is highly discouraged, use it only to shorten a name if the name is too big (more than 2
+		words) or the short name is very famous (like a name "put_string" can be replaced with "puts" as we all know what
+		standard puts does but don't replace names like "get_height" with "geth" it decreases readability).
+
+	Exceptions (these type of names should be given to things with more importance than surrounding):
+
+		Names representing states (like function names for button states) should be written in upper case.
+
+	Some special names (these names doesn't follow any rules):
+
+		The special class providing classless interface for making games is callled, 'Game'.
+		Special functions:
+			Functions of game loop:
+				Create
+				Input
+				Update
+				Clear
+				Render
+				Print
+				Destroy
+			Functions of game state class:
+				Enter
+				Update
+				Render
+				Exit
+			Update and Render functions no matter where appears if they are called from Update and Render functions of
+			game loop their first character will be written in upper case.
+
+	Final rule:
+
+		Class names cannot have the word "CLASS" in it, if the class doesn't have predefined object.
+
+		Numbers are appended to file names for versioning (for initial or 0 version no number will be appended to the file
+		name), but no number should be appended to the class names inside the header files.
+
+		If a header file is named after a macro (with uppercase name) it contains, its name should be in uppercase.
+
+		Name of the classes of Pre-defined objects will be generated as [name of predefined object]_CLASS. Eg, COLOR will
+		be an object of COLOR_CLASS, WINDOW will be an object of WINDOW_CLASS. It's a little exception as these classes are
+		special.

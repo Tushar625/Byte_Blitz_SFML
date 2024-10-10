@@ -1,0 +1,43 @@
+
+Byte_Blitz game engine is made of several header files.
+
+These header files performs different kinds of jobs and also contributes to the modular
+design of this game engine.
+
+>>>> These header files can be divided into two types:-
+
+	General purpose header files. (Not specific to this game engine)
+
+	Special purpose header files. (Makes sense inside this game engine only)
+
+>>>> Rules for including header files in a General purpose header file of this game engine:-
+
+Any element inside these header file must not depend upon a header file which was
+included into a header file included to current dependent header file.
+
+	eg:
+
+	let,
+	A.h is included into B.h (<A.h>B.h),
+	B.h is included into C.h (<B.h>C.h)
+
+	now any element of C.h must not depend upon A.h
+
+>>>> Rules for including header files in a General purpose header file:-
+
+The elements of these header file can depend on General purpose header file any header file inside
+the General purpose header file or standard C++ header files.
+
+>>>> A general rule for all header files:-
+
+No. of header files included must be minimum, no extra unnecessary header files.
+
+These header files must not depend on any header file in the source code where we want to
+include them.
+
+	eg:
+
+	let,
+	A.h is an header file of this game engine
+	You want to include it into B.c source file, A.h must not require you to include any extra
+	header file in B.c for it to work
