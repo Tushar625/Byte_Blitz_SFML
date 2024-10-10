@@ -94,6 +94,8 @@ class GAME_LOOP
 
 	void render_loop()
 	{
+		Render_Thread_Init();
+
 		FRAME_RATE_STABILIZER.initialize();	// run with stabilized fps
 
 		while(loop_continue)
@@ -201,6 +203,11 @@ class GAME_LOOP
 	{
 		return !STOP_GAME_LOOP;
 	}
+
+	// a simple initializer for render thread
+
+	virtual void Render_Thread_Init()
+	{}
 
     virtual void Clear()
 	{}

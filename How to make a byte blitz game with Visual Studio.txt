@@ -51,7 +51,7 @@ set Configuration Properties -> Debugging -> Working Directory: $(SolutionDir)\.
 
 [Showing compiler the 'path' to the directory containing Byte_Blitz game engine]
 
-set Configuration Properties -> C/C++ -> General -> Additional Include Directories: C:/Users/Tushar Das/Desktop/desktop/New C++ 2024/packages/Byte_Blitz_SFML/
+Add to Configuration Properties -> C/C++ -> General -> External Include Directories: C:/Users/Tushar Das/Desktop/desktop/New C++ 2024/packages/Byte_Blitz_SFML/
 
 [Following field takes some macro that are added at the top of each source files before compiling,
 _CRT_SECURE_NO_WARNINGS macro prevents compiler from displaying some silly errors and warnings]

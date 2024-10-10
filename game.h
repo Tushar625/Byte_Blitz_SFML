@@ -128,6 +128,9 @@ class Game : public GAME_LOOP
 	#endif
 
 
+	void Render_Thread_Init() override;
+
+
     void Clear() override;
 
 
@@ -152,6 +155,13 @@ class Game : public GAME_LOOP
 
 	Game()
 	{
+		/*
+			deactivate the window's context in main thread before
+			starting the render thread
+		*/
+
+		WINDOW.setActive(false);
+
 		start_game();
 	}
 
@@ -172,6 +182,18 @@ class Game : public GAME_LOOP
 	inline void Game::Input()
 	{
 		INPUT.scan();
+	}
+
+#endif
+
+
+#ifndef GAME_RENDER_THREAD_INIT
+
+	inline void Game::Render_Thread_Init()
+	{
+		// activate the window's context in render thread
+
+		WINDOW.setActive(true);
 	}
 
 #endif

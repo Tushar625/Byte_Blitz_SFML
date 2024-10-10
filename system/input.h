@@ -34,7 +34,7 @@ public:
 	{
 		// by default repeated key inputs are disabled
 
-		Window.setKeyRepeatEnabled(false);
+		WINDOW.setKeyRepeatEnabled(false);
 	}
 
 	// look for events, this function must be called in each iteration of game loop
@@ -49,7 +49,7 @@ public:
 
 		m_button = sf::Mouse::ButtonCount;
 
-		while (Window.pollEvent(m_event))
+		while (WINDOW.pollEvent(m_event))
 		{
 			switch (m_event.type)
 			{
@@ -125,12 +125,12 @@ public:
 
 	bool isHeld(sf::Keyboard::Scan::Scancode key)
 	{
-		return Window.hasFocus() && sf::Keyboard::isKeyPressed(key);
+		return WINDOW.hasFocus() && sf::Keyboard::isKeyPressed(key);
 	}
 
 	bool isHeldM(sf::Mouse::Button button)
 	{
-		return Window.hasFocus() && sf::Mouse::isButtonPressed(button);
+		return WINDOW.hasFocus() && sf::Mouse::isButtonPressed(button);
 	}
 
 	// returns true if the key is just released else 0
@@ -147,7 +147,7 @@ public:
 
 	sf::Vector2i pointer()
 	{
-		return sf::Mouse::getPosition(Window);
+		return sf::Mouse::getPosition(WINDOW);
 	}
 
 } INPUT;
