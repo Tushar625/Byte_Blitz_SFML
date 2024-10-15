@@ -1,27 +1,27 @@
-Here we provide a description of the (Byte_Blitz1) game engine:
+Here I provide a description of the (Byte_Blitz_SFML) game engine:
 
-It is version 1 of the Byte_Blitz game engine.
+It is SFML version of the Byte_Blitz game engine.
 
 This game engine is made of several modules that interact with each other to run the game.
 Main advantage of this approach is that each individual module can be upgraded without
 affecting others.
 
-[In this game engine, each folder holds a module so from now on we will use the word “folder”
+[In this game engine, each folder holds a module so from now on I will use the word “folder”
 instead of “module”]
 
 Before, talking about folders in details I want to mention that entry point of the game engine
-is “game.h” header file in root or Byte_Blitz1 folder; we include all the necessary header
+is “game.h” header file in root or Byte_Blitz_SFML folder; I include all the necessary header
 files in it so, to create a game with this game engine you need to include only this header
 file into the source code (More about its usage is mentioned in the documentation inside it).
 
-[****[We recommand you to use Visual Studio to make games using this game engine. We have found
+[****[I recommand you to use Visual Studio to make games using this game engine. I have found
 that the debugger provided with Visual Studio is very good at detecting Segmentation Faults in
 the application you make, without it Segmentation Faults are very difficult to detect and will
 waste a ton of your time. You don't have to do anything spacial, just run the application with
 debugger after you build it and if any Segmentation Faults occurr debugger will detect it,
 display what is causing it and stop execution of the application]****]
 
-Now we describe each folder:
+Now I describe each folder:
 
 game_loop:
 
@@ -43,7 +43,7 @@ engine.
 
 This header file is to be inherited by another class defined in a header file in the system folder
 described below, which will define the platform dependent part of this class and complete the
-graphics system of the game engine. For this we keep another header file in graphics folder that
+graphics system of the game engine. For this I keep another header file in graphics folder that
 helps the class in system folder to access proper version of afore said general purpose header file.
 (this second header file will not be included in the published version of this game engine)
 
@@ -60,7 +60,7 @@ statemachine in a game. (this header file contains a detailed description of its
 image:
 
 This folder is designed to provide several general purpose classes to load and store different types
-image files. They the used by classes in graphics folder to access image files. (currently we can load
+image files. They the used by classes in graphics folder to access image files. (currently I can load
 and save only .bmp 24 bit files) (this folder contains its own manual)
 
 sound:
@@ -78,7 +78,7 @@ It contains several general purpose header files which are used by all other fol
 	Only the system folder mentioned below contains all the platform dependent code used in this game
 	engine and helps to seperate the general purpose codes from the platform dependent ones properly.
 
-	This way to make this game engine work on different platforms we only have to redefine the system
+	This way to make this game engine work on different platforms I only have to redefine the system
 	folder, rest of the game engine remains same, unaffected.
 ]
 

@@ -3,8 +3,6 @@
 
 #include<chrono>
 
-// using namespace ;
-
 
 /*
 	this class is to be used to control the fps in a loop

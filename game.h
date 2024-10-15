@@ -52,7 +52,7 @@ int return_value = 0;	// value to be returned when the program ends
 	default or old definition.
 
 	Constructor of the class has the start_game() function to start the game loop
-	autometically when an object is created. Default fps is 20, use set_fps() member
+	autometically when an object is created. Default fps is 30, use set_fps() member
 	function of GAME_LOOP class to change fps
 
 	An object of this class must be created after all the required objects in the game
@@ -60,11 +60,9 @@ int return_value = 0;	// value to be returned when the program ends
 
 	How to use:
 
-	Before including console_game3.h,
-
-	Define the macros corresponding to the member function to set them up, these macros
-	will allow user to either redefine them or use their default definition. (More about
-	these macros later)
+	Before including game.h, define the macros corresponding to the member function to
+	set them up, these macros will allow user to either redefine them or use their default
+	definition. (More about these macros later)
 
 	Now, you can define the necessary member functions, Game::function_name(), the way
 	we define a member function outside the class in c++.
@@ -100,17 +98,16 @@ int return_value = 0;	// value to be returned when the program ends
 	Render() are declared by default i.e., one must define them, to use their default definition one must
 	define "NO_GAME_UPDATE" and "NO_GAME_RENDER" macros respectively.
 
-	Input(), Clear(), Print() and Destroy() are usually not required to be redefined but if one wants to
-	redefine them, he or she must define "GAME_INPUT", "GAME_CLEAR", "GAME_PRINT", "GAME_DESTROY" macros
-	respectively to disable or remove their default definition.
+	Input(), Render_Thread_Init(), Clear(), Print() and Destroy() are usually not required to be redefined
+	but if one wants to redefine them, he or she must define "GAME_INPUT", "GAME_RENDER_THREAD_INIT",
+	"GAME_CLEAR", "GAME_PRINT", "GAME_DESTROY" macros respectively to disable or remove their default definition.
 
-	**** This file only contains default definitions of Input(), Clear(), Print() member functions, default
-	**** definitions of other member functions are provided in parent class
+	**** This file only contains default definitions of Input(), Render_Thread_Init(), Clear(), Print() member
+	**** functions, default definitions of other member functions are provided in parent class
 
 	Summary:
 
-	If you want to redefine all of "Create(), Update() and Render()" only, you don't need to define any
-	macro
+	If you want to redefine only "Create(), Update() and Render()", you don't need to define any macro
 */
 
 class Game : public GAME_LOOP

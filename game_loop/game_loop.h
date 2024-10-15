@@ -52,6 +52,11 @@
 
     >>>> Three subsequent functions makes the graphics rendering system
 
+		=> void Render_Thread_Init()
+
+		Initializes the Rendering thread. it is called only once when the
+		rendering thread is started
+
         => void Clear()
 
         To clear the default frame or canvas.
