@@ -6,6 +6,8 @@
 
 #include<cstdio>
 
+#include<atomic>
+
 #include"../utility/fps_control.h"	// to coltrol the fps properly as it changes continuously making the graphics bad
 
 #include"../utility/CHARB_STRINGB.h"	// provids basic unicode support for chars and strings
@@ -87,7 +89,11 @@ class GAME_LOOP
 
 	FPS_CONTROL FRAME_RATE_STABILIZER;
 
-	bool loop_continue;
+	std::atomic_bool update_lock;
+
+	std::atomic_bool render_lock;
+
+	std::atomic_bool render_loop_continue, update_loop_continue;
 
 	/*
 		main game loop systems
@@ -103,7 +109,7 @@ class GAME_LOOP
 
 		FRAME_RATE_STABILIZER.initialize();	// run with stabilized fps
 
-		while(loop_continue)
+		while(render_loop_continue)
 		{
 			// here we provide a way to peek into the update rate if needed for debug purposes
 
@@ -131,14 +137,26 @@ class GAME_LOOP
 
 			// >>>> graphics rendering system
 
-			Clear();  // to clear the default frame or canvas
+			{
+				while(update_lock);	// waiting for update lock to be released
 
-			Render(fps_str);    // to rander or draw on the default frame or canvas
+				render_lock = true;	// locking render lock
 
-			Print();  // to print the default frame or canvas on screen
+				Clear();  // to clear the default frame or canvas
+
+				Render(fps_str);    // to rander or draw on the default frame or canvas
+
+				Print();  // to print the default frame or canvas on screen
+
+				render_lock = false;	// release render lock
+			}
 
 			FRAME_RATE_STABILIZER.put_delay();	// dynamic delay to stabilize the fps
 		}
+
+		// after render loop is stopped we stop the update loop
+
+		update_loop_continue = false;
 	}
 
 	void game_loop()
@@ -147,6 +165,10 @@ class GAME_LOOP
 			to initialize game i.e. to create the initial state of
 			the game before entering the game loop
 		*/
+
+		update_lock = false;
+
+		render_lock = false;
 
 		if(Create() != SUCCESS)
 		{
@@ -157,7 +179,9 @@ class GAME_LOOP
 
 		while(true)
 		{
-			loop_continue = true;
+			render_loop_continue = true;
+
+			update_loop_continue = true;
 
 			// start render loop
 
@@ -167,14 +191,33 @@ class GAME_LOOP
 
 			UPDATE_RATE_STABILIZER.initialize();	// run with stabilized ups
 
-			while(loop_continue)
+			// render loop stops first then the update loop stops
+
+			while(update_loop_continue || render_loop_continue)
 			{
                 // >>>> input and processing system
                 
-				Input();
+				{
+					do{
+						/*
+							as input function constantly checks for upcoming events it must not stop
+							even if the update process has to wait
 
-				if(Update(UPDATE_RATE_STABILIZER.dt) == STOP_GAME_LOOP)
-					loop_continue = false;
+							do-while loop also makes sure that Input() gets executed at least once even if
+							render_lock is false
+						*/
+
+						Input();
+
+					}while(render_lock);	// waiting for render lock to be released
+
+					update_lock = true;	// locking update lock
+
+					if(Update(UPDATE_RATE_STABILIZER.dt) == STOP_GAME_LOOP)
+						render_loop_continue = false;	// stop the render loop which later stops update loop
+
+					update_lock = false;	// release update lock
+				}
 
 				UPDATE_RATE_STABILIZER.put_delay();	// dynamic delay to stabilize the fps
 			}
