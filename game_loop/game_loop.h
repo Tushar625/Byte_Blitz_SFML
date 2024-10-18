@@ -173,7 +173,7 @@ class GAME_LOOP
 							loop_continue = false;	// stop the render loop which later stops update loop
 						}
 
-						ut_accumulator =- udt;
+						ut_accumulator -= udt;
 					}
 
 					lock = true;	// unlock the render
