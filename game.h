@@ -133,7 +133,7 @@ class Game : public GAME_LOOP
 
 	#ifndef NO_GAME_RENDER
 
-		void Render(const CHARB *fps_str) override;
+		void Render(double fps) override;
 	
 	#endif
 

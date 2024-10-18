@@ -10,8 +10,6 @@
 
 #include"../utility/fps_control.h"	// to coltrol the fps properly as it changes continuously making the graphics bad
 
-#include"../utility/CHARB_STRINGB.h"	// provids basic unicode support for chars and strings
-
 
 
 #define SUCCESS 0
@@ -63,7 +61,7 @@
 
         To clear the default frame or canvas.
         
-        => void Render(const CHARB *fps_str)
+        => void Render(double fps)
 
         To rander or draw on the default frame or canvas, it receives the fps as a string.
 
@@ -83,17 +81,15 @@
 
 class GAME_LOOP
 {
-	CHARB fps_str[12];
-
-	FPS_CONTROL UPDATE_RATE_STABILIZER;
-
 	FPS_CONTROL FRAME_RATE_STABILIZER;
 
 	std::atomic_bool update_lock;
 
 	std::atomic_bool render_lock;
 
-	std::atomic_bool render_loop_continue, update_loop_continue;
+	std::atomic_bool loop_continue;
+
+	double udt, ut_accumulator;
 
 	/*
 		main game loop systems
@@ -109,66 +105,47 @@ class GAME_LOOP
 
 		FRAME_RATE_STABILIZER.initialize();	// run with stabilized fps
 
-		while(render_loop_continue)
-		{
-			// here we provide a way to peek into the update rate if needed for debug purposes
+		do{
 
-			#ifdef PEEK_UPDATE_RATE
-
-			auto dt = 1 / UPDATE_RATE_STABILIZER.dt;
-
-			#else
-
-			auto dt = 1 / FRAME_RATE_STABILIZER.dt;
-
-			#endif
-
-			#ifndef UNICODE
-			if(FRAME_RATE_STABILIZER.dt)
-				std::sprintf(fps_str, "%lf", dt);
-			else
-				std::sprintf(fps_str, "MAX");
-			#else
-			if(FRAME_RATE_STABILIZER.dt)
-				_swprintf(fps_str, L"%lf", dt);
-			else
-				_swprintf(fps_str, L"MAX");
-			#endif
+			auto fps = 1 / FRAME_RATE_STABILIZER.dt;
 
 			// >>>> graphics rendering system
 
 			{
-				while(update_lock);	// waiting for update lock to be released
+				// waiting for update_lock to be locked (false) and render_lock to be released (true)
 
-				render_lock = true;	// locking render lock
+				while(!(update_lock == false && render_lock == true));
+
+				render_lock = false;	// locking render lock
 
 				Clear();  // to clear the default frame or canvas
 
-				Render(fps_str);    // to rander or draw on the default frame or canvas
+				Render(fps);    // to rander or draw on the default frame or canvas
 
-				render_lock = false;	// release render lock
+				ut_accumulator += FRAME_RATE_STABILIZER.dt;
+
+				update_lock = true;	// release update lock
 			}
 
 			Print();  // to print the default frame or canvas on screen
 
 			FRAME_RATE_STABILIZER.put_delay();	// dynamic delay to stabilize the fps
-		}
 
-		// after render loop is stopped we stop the update loop
-
-		update_loop_continue = false;
+		}while(loop_continue);
 	}
 
 	void game_loop()
 	{
+		ut_accumulator = 0;	// keeps time for update
+
+		update_lock = false;	// lock update lock
+
+		render_lock = true;	// open render lock
+
 		/*
 			to initialize game i.e. to create the initial state of
 			the game before entering the game loop
 		*/
-
-		update_lock = false;
-
-		render_lock = false;
 
 		if(Create() != SUCCESS)
 		{
@@ -179,9 +156,7 @@ class GAME_LOOP
 
 		while(true)
 		{
-			render_loop_continue = true;
-
-			update_loop_continue = true;
+			loop_continue = true;
 
 			// start render loop
 
@@ -189,38 +164,32 @@ class GAME_LOOP
 
 			// start update loop
 
-			UPDATE_RATE_STABILIZER.initialize();	// run with stabilized ups
-
-			// render loop stops first then the update loop stops
-
-			while(update_loop_continue || render_loop_continue)
-			{
+			do{
                 // >>>> input and processing system
                 
 				{
-					do{
-						/*
-							as input function constantly checks for upcoming events it must not stop
-							even if the update process has to wait
+					// waiting for render_lock to be locked (false) and update_lock to be released (true)
 
-							do-while loop also makes sure that Input() gets executed at least once even if
-							render_lock is false
-						*/
+					while(!(update_lock == true && render_lock == false));
 
+					update_lock = false;	// locking update lock
+
+					while(ut_accumulator > udt)
+					{
 						Input();
 
-					}while(render_lock);	// waiting for render lock to be released
+						if(Update(udt) == STOP_GAME_LOOP)
+						{
+							loop_continue = false;	// stop the render loop which later stops update loop
+						}
 
-					update_lock = true;	// locking update lock
+						ut_accumulator =- udt;
+					}
 
-					if(Update(UPDATE_RATE_STABILIZER.dt) == STOP_GAME_LOOP)
-						render_loop_continue = false;	// stop the render loop which later stops update loop
-
-					update_lock = false;	// release update lock
+					render_lock = true;	// release render lock
 				}
 
-				UPDATE_RATE_STABILIZER.put_delay();	// dynamic delay to stabilize the fps
-			}
+			}while(loop_continue);
 
 			// wait for render thread to end
 
@@ -260,7 +229,7 @@ class GAME_LOOP
     virtual void Clear()
 	{}
 
-	virtual void Render(const CHARB *fps_str)
+	virtual void Render(double fps)
 	{}
 
     virtual void Print()
@@ -280,16 +249,16 @@ class GAME_LOOP
 
 		void set_ups(long long target_ups = 120)
     	{
-       		UPDATE_RATE_STABILIZER.set(target_ups);
+			udt = 1.0 / (target_ups);
 		}
 
 		// call it from the constructor of the game object to start the game
 
 		void start_game(long long target_fps = 30, long long target_ups = 120)	// start_game also sets the fps, default fps is 20.0
 		{
-			FRAME_RATE_STABILIZER.set(target_fps);
+			set_fps(target_fps);
 
-			UPDATE_RATE_STABILIZER.set(target_ups);
+			set_ups(target_ups);
 
 			game_loop();
 		}
