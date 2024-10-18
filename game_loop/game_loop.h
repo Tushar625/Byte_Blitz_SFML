@@ -146,10 +146,10 @@ class GAME_LOOP
 
 				Render(fps_str);    // to rander or draw on the default frame or canvas
 
-				Print();  // to print the default frame or canvas on screen
-
 				render_lock = false;	// release render lock
 			}
+
+			Print();  // to print the default frame or canvas on screen
 
 			FRAME_RATE_STABILIZER.put_delay();	// dynamic delay to stabilize the fps
 		}
