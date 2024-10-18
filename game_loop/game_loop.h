@@ -83,11 +83,7 @@ class GAME_LOOP
 {
 	FPS_CONTROL FRAME_RATE_STABILIZER;
 
-	std::atomic_bool update_lock;
-
-	std::atomic_bool render_lock;
-
-	std::atomic_bool loop_continue;
+	std::atomic_bool loop_continue, lock;
 
 	double udt, ut_accumulator;
 
@@ -112,11 +108,9 @@ class GAME_LOOP
 			// >>>> graphics rendering system
 
 			{
-				// waiting for update_lock to be locked (false) and render_lock to be released (true)
+				// waiting for render to be unlocked
 
-				while(!(update_lock == false && render_lock == true));
-
-				render_lock = false;	// locking render lock
+				while(lock == false);
 
 				Clear();  // to clear the default frame or canvas
 
@@ -124,7 +118,7 @@ class GAME_LOOP
 
 				ut_accumulator += FRAME_RATE_STABILIZER.dt;
 
-				update_lock = true;	// release update lock
+				lock = false;	// unlock the update
 			}
 
 			Print();  // to print the default frame or canvas on screen
@@ -138,9 +132,7 @@ class GAME_LOOP
 	{
 		ut_accumulator = 0;	// keeps time for update
 
-		update_lock = false;	// lock update lock
-
-		render_lock = true;	// open render lock
+		lock = true;	// true => render, false => update
 
 		/*
 			to initialize game i.e. to create the initial state of
@@ -168,11 +160,9 @@ class GAME_LOOP
                 // >>>> input and processing system
                 
 				{
-					// waiting for render_lock to be locked (false) and update_lock to be released (true)
+					// waiting for update to be unlocked
 
-					while(!(update_lock == true && render_lock == false));
-
-					update_lock = false;	// locking update lock
+					while(lock == true);
 
 					while(ut_accumulator > udt)
 					{
@@ -186,7 +176,7 @@ class GAME_LOOP
 						ut_accumulator =- udt;
 					}
 
-					render_lock = true;	// release render lock
+					lock = true;	// unlock the render
 				}
 
 			}while(loop_continue);
