@@ -4,8 +4,6 @@
 
 #include<thread>
 
-#include<cstdio>
-
 #include<atomic>
 
 #include"../utility/fps_control.h"	// to coltrol the fps properly as it changes continuously making the graphics bad
