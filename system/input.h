@@ -145,7 +145,16 @@ public:
 		return m_button == button && m_buttonState == false;
 	}
 
-	sf::Vector2i pointer()
+	// returns coordinate of the point, pointed by the pointer, in the viewport wrt the 2D World
+
+	sf::Vector2f pointer()
+	{
+		return WINDOW.mapPixelToCoords(sf::Mouse::getPosition(WINDOW));
+	}
+
+	// returns pixel-position of the point, pointed by the pointer, in the window
+
+	sf::Vector2i pointerPixel()
 	{
 		return sf::Mouse::getPosition(WINDOW);
 	}
