@@ -237,8 +237,13 @@ class Game : public GAME_LOOP
 	to serve.
 */
 
+#ifndef USE_MAIN
 
-int main(int arg_count, char *arg[])
+#define USE_MAIN main	// redefine this macro to use different main function
+
+#endif
+
+int USE_MAIN(int arg_count, char *arg[])
 {
 	::arg_count = arg_count;
 
