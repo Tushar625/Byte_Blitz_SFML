@@ -59,7 +59,7 @@
 
         To clear the default frame or canvas.
         
-        => void Render(double fps)
+        => void Render()
 
         To rander or draw on the default frame or canvas, it receives the fps as a string.
 
@@ -84,6 +84,8 @@ class GAME_LOOP
 	std::atomic_bool loop_continue, lock;
 
 	double udt, ut_accumulator;
+	
+	std::atomic<double> fps;
 
 	/*
 		main game loop systems
@@ -101,7 +103,7 @@ class GAME_LOOP
 
 		do{
 
-			auto fps = 1 / FRAME_RATE_STABILIZER.dt;
+			fps = 1 / FRAME_RATE_STABILIZER.dt;
 
 			// >>>> graphics rendering system
 
@@ -112,7 +114,7 @@ class GAME_LOOP
 
 				Clear();  // to clear the default frame or canvas
 
-				Render(fps);    // to rander or draw on the default frame or canvas
+				Render();    // to rander or draw on the default frame or canvas
 
 				ut_accumulator += FRAME_RATE_STABILIZER.dt;
 
@@ -128,6 +130,8 @@ class GAME_LOOP
 
 	void game_loop()
 	{
+		fps = 0;
+
 		ut_accumulator = 0;	// keeps time for update
 
 		lock = true;	// true => render, false => update
@@ -217,7 +221,7 @@ class GAME_LOOP
     virtual void Clear()
 	{}
 
-	virtual void Render(double fps)
+	virtual void Render()
 	{}
 
     virtual void Print()
@@ -229,6 +233,11 @@ class GAME_LOOP
 	}
 
 	public:
+
+		double get_fps()
+    	{
+       		return fps;
+		}
 
 		void set_fps(long long target_fps = 30)
     	{
@@ -278,7 +287,8 @@ class GAME_LOOP
 	the game.
 
 	start_game() also sets the fps and ups of the game, default value is 30 and 120
-	respectively. you can also set fps and ups by directly calling set_fps() and set_ups()
+	respectively. you can also set fps and ups by directly calling set_fps() and set_ups().
+	You can also access the real fps with get_fps().
 
 	Finally you have to declare a global object of this main game class to start the game.
 

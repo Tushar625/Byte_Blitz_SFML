@@ -51,12 +51,12 @@ int return_value = 0;	// value to be returned when the program ends
 	If enabled a function must be redefined and the new definition will override its
 	default or old definition.
 
-	Constructor of the class has the start_game() function to start the game loop
-	autometically when an object is created. Default fps is 30, use set_fps() member
-	function of GAME_LOOP class to change fps
-
-	An object of this class must be created after all the required objects in the game
-	source code has been created so we create this object in the main() function below.
+	An object of this class "MY_GAME" is created, that represents the core of the game
+	or game loop.
+	
+	Inside the main() function, defined at the very end of this file, MY_GAME.start_game() is called
+	so that the game loop starts after all the required objects in the game source code has been
+	created.
 
 	How to use:
 
@@ -72,6 +72,11 @@ int return_value = 0;	// value to be returned when the program ends
 
 	After you complete defining those functions just run the source code, the game loop
 	will start autometically.
+
+	By default the game loop starts at 30fps and 120ups. To set fps or ups or get fps use set_fps(),
+	set_ups() or get_fps() functions of MY_GAME object From any where in the game source code.
+
+	!!!! never call MY_GAME.start_game() from the game source code
 
 	To sum it up, from top to bottom of the source code where you include this header file,
 	
@@ -133,7 +138,7 @@ class Game : public GAME_LOOP
 
 	#ifndef NO_GAME_RENDER
 
-		void Render(double fps) override;
+		void Render() override;
 	
 	#endif
 
@@ -158,15 +163,13 @@ class Game : public GAME_LOOP
 		*/
 
 		WINDOW.setActive(false);
-
-		start_game();
 	}
 
 	~Game()
 	{
 		WINDOW.close();
 	}
-};
+} MY_GAME;	// object representing the core of this this game
 
 
 /*
@@ -217,29 +220,18 @@ class Game : public GAME_LOOP
 
 
 /*
-	main() must be placed here else it won't work in this classless form
+	the code inside main() is executed after all the objects defined in the game source
+	code is created.
 
-	Issue:
+	Hence, we call start_game() inside main() so that the game loop starts to run only
+	after all the necessary objects are created.
 
-	Initially we created an object of Game class directly after its definition.
-	
-	Problem was that when we include this header file in a source code, the object of
-	Game is created before object of any other class, defined below, can be created
-	thus, the game loop started to run before any of its necessary objects, mentioned in the
-	source code, can be created.
-
-	This caused run-time error.
-
-	Fix:
-
-	We create the object of Game in the main function, this way it will be the last object
-	created, and the game loop will start well after all its necessary objects are created and ready
-	to serve.
+	!!!! after the game loop starts to run never call this start_game() function again
 */
 
 #ifndef USE_MAIN
 
-#define USE_MAIN main	// redefine this macro to use different main function
+#define USE_MAIN main	// redefine this macro to use different main function say, "WinMain"
 
 #endif
 
@@ -249,7 +241,7 @@ int USE_MAIN(int arg_count, char *arg[])
 
 	::arg = arg;
 
-	Game game_obj;
+	MY_GAME.start_game();
 
 	return return_value;
 }
