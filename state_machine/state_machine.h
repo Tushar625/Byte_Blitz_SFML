@@ -1,6 +1,7 @@
 #pragma once
 
-#include<initializer_list>
+#include<vector>
+#include<utility>
 
 
 /*
@@ -20,14 +21,11 @@
 	[note, type of each state is different but they are inherited from the same BASE_STATE class so, a BASE_STATE
 	type pointer can hold their address]
 
-	if needed, use set member function to put address of proper state in proper index (its
-	claver to use enum to represent those indices).
-
 	call the update and render methods of STATE_MACHINE from update and render
 	functions of the game loop.
 
-	by default the state machine constructor sets the first state as the initial state to change it
-	the constructor takes a default parameter, the index of initial state (set to 0 by default).
+	by default the state machine constructor doesn't set any state as the initial state so use
+	change_to() to set the initial state, after a state machine object is created.
 
 	and its done.
 
@@ -95,10 +93,7 @@ class STATE_MACHINE
 		its an array of pointers where each element points to a state
 	*/
 
-	BASE_STATE **state_list;
-
-
-	int n;  // no. of game states
+	std::vector<BASE_STATE*> state_list;
 
 
 	public:
@@ -108,39 +103,9 @@ class STATE_MACHINE
 		takes a list of pointers to state objects
 	*/
 
-	STATE_MACHINE(std::initializer_list<BASE_STATE *> state_list, int initial_state = 0) : current_state(nullptr) // no current state is set initially
+	STATE_MACHINE(std::vector<BASE_STATE *> state_list) : current_state(nullptr) // no current state is set initially
 	{
-		n = (int)state_list.size();	// getiing the no. of the states
-
-		this->state_list = new BASE_STATE*[n]{0};    // allocating memory for list of states
-
-		int i = 0;	// index for the state_list
-
-		// by now the state_list is created, load all the states into it
-
-		for(auto state: state_list)
-		{
-			this->state_list[i++] = state;
-		}
-
-		change_to(initial_state);	// start the first state by default
-	}
-
-
-	// destructor deallocates the state list
-
-	~STATE_MACHINE()
-	{
-		delete[] state_list;
-	}
-
-
-	// set inidividual states by their index (doesn't have much use these days)
-
-	void set(int i, BASE_STATE *p_state)
-	{
-		if(i >= 0 && i < n)
-			state_list[i] = p_state;
+		this->state_list = std::move(state_list);
 	}
 
 
@@ -151,7 +116,7 @@ class STATE_MACHINE
 
 	bool change_to(int i)
 	{
-		if(i < 0 || i >= n) // i is not accurate
+		if(i < 0 || i >= state_list.size()) // i is not accurate
 			return false;
 
 		if(current_state)
@@ -182,7 +147,7 @@ class STATE_MACHINE
 
 			// if the index of the state returned is valid call the state changer
 
-			if(i >= 0 && i < n)
+			if(i >= 0 && i < state_list.size())
 				change_to(i);
 		}
 
