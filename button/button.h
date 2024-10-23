@@ -1,7 +1,8 @@
 #pragma once
 
 #include"../utility/pos_fun.h"
-#include<initializer_list>
+#include<vector>
+#include<utility>
 
 
 /*
@@ -431,13 +432,7 @@ class BUTTON_LIST
 		its an array of pointers to button objects or buttons
 	*/
 
-	BUTTON** button_list;
-
-	/*
-		No. of buttons in the button_list
-	*/
-
-	int n;
+	std::vector<BUTTON*> button_list;
 
 	/*
 		index of currently selected button
@@ -453,20 +448,9 @@ public:
 		takes a list of pointers to buttons and creates the button_list
 	*/
 
-	BUTTON_LIST(std::initializer_list<BUTTON*> button_list)
+	BUTTON_LIST(std::vector<BUTTON*> button_list)
 	{
-		n = (int)button_list.size();	// getting the size of the initializer list
-
-		this->button_list = new BUTTON * [n] {0};	// creating the button list
-
-		int i = 0;
-
-		// storing the button pointers from initializer list to button list
-
-		for (auto button : button_list)
-		{
-			this->button_list[i++] = button;
-		}
+		this->button_list = std::move(button_list);
 
 		bindex = 0;	// select the first button
 	}
@@ -479,7 +463,7 @@ public:
 
 	bool is_valid_index(int index) const
 	{
-		return 0 <= index && index < n;
+		return 0 <= index && index < button_list.size();
 	}
 
 	/*
@@ -507,6 +491,8 @@ public:
 	int Update(int mouse_x, int mouse_y, bool is_clicked, bool is_released, bool up_pressed = false, bool down_pressed = false, bool enter_pressed = false)
 	{
 		int button_selected = -1;
+
+		int n = button_list.size();
 
 		// button input test
 
@@ -562,9 +548,9 @@ public:
 
 		// rendering the buttons
 
-		for (int i = 0; i < n; i++)
+		for(const auto& button : button_list)
 		{
-			button_list[i]->Render();
+			button->Render();
 		}
 	}
 
@@ -575,7 +561,7 @@ public:
 
 	int get_bcount() const
 	{
-		return n;
+		return button_list.size();
 	}
 
 	/*
