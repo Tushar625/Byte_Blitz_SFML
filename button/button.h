@@ -19,7 +19,7 @@
 	you are done.
 
     now declare objects of this button to use it after setting its position and size properly
-	(these are usually set in the constructor)
+	(these are usually set in a initialize function, don't use constructor)
 
     in the render function of the game loop keep the rendering function that
     will display the proper state of the button
