@@ -1,8 +1,5 @@
 #pragma once
 
-#include<vector>
-#include<utility>
-
 
 /*
 	how to use:
@@ -89,24 +86,10 @@ class STATE_MACHINE
 	BASE_STATE *current_state;
 
 
-	/*
-		its an array of pointers where each element points to a state
-	*/
-
-	std::vector<BASE_STATE*> state_list;
-
-
 	public:
 
-
-	/*
-		takes a list of pointers to state objects
-	*/
-
-	STATE_MACHINE(std::vector<BASE_STATE *> state_list) : current_state(nullptr) // no current state is set initially
-	{
-		this->state_list = std::move(state_list);
-	}
+	STATE_MACHINE() : current_state(nullptr) // no current state is set initially
+	{}
 
 
 	/*
@@ -114,20 +97,16 @@ class STATE_MACHINE
 		exit from current state and set the current sate as ith state
 	*/
 
-	bool change_to(int i)
+	template<typename STATE_TYPE>
+	
+	void change_to(STATE_TYPE& next_state)
 	{
-		if(i < 0 || i >= state_list.size()) // i is not accurate
-			return false;
-
 		if(current_state)
 			current_state->Exit();  // exit from current state
 
-		current_state = state_list[i];
+		current_state = &next_state;	// store address of this state
 
-		if(current_state)
-			current_state->Enter(); // enter new state
-
-		return true;
+		current_state->Enter(); // enter new state
 	}
 
 
@@ -139,19 +118,12 @@ class STATE_MACHINE
 
 	int Update(double dt)
 	{
-		int i = -1;
-
 		if(current_state)
 		{
-			i = current_state->Update(dt);
-
-			// if the index of the state returned is valid call the state changer
-
-			if(i >= 0 && i < state_list.size())
-				change_to(i);
+			return current_state->Update(dt);
 		}
 
-		return i;
+		return -1;
 	}
 
 
