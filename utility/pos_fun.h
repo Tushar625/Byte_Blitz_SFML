@@ -33,6 +33,16 @@ struct coord2d
 	{
 		return x != pt.x || y != pt.y;
 	}
+
+	coord2d operator +(coord2d pt)
+	{
+		return coord2d(x + pt.x, y + pt.y);
+	}
+
+	coord2d operator -(coord2d pt)
+	{
+		return coord2d(x - pt.x, y - pt.y);
+	}
 };
 
 
@@ -215,7 +225,7 @@ inline type get_radius(type diameter)
 
 // used to set the position of a sepcific coordinate in following functions
 
-enum COORD_POSITION {TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT, CENTER, TOP_CENTER, BOTTOM_CENTER, LEFT_CENTER, RIGHT_CENTER};
+enum COORD_POSITION {TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT, CENTER, TOP_CENTER, BOTTOM_CENTER, LEFT_CENTER, RIGHT_CENTER, TOP, BOTTOM, LEFT, RIGHT};
 
 
 /*
