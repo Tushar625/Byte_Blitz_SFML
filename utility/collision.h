@@ -5,8 +5,6 @@
 
 #include<algorithm>
 
-#include<cmath>
-
 // collision between two aabb boxes
 
 inline bool aabb_collision(double x1, double y1, double width1, double height1, double x2, double y2, double width2, double height2)
@@ -52,9 +50,9 @@ inline bool circle_aabb_collision(double& xp, double& yp, double xc, double yc, 
 
 	yp = nearest_point.y;
 
-	delta = nearest_point - center; // distance between P and C
+	// delta = nearest_point - center; // distance between P and C
 
-	auto dist = sqrt(delta.x * delta.x + delta.y * delta.y);
+	auto dist = dist2d(center.x, center.y, nearest_point.x, nearest_point.y);
 
 	return dist < radius;
 }

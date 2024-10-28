@@ -1,6 +1,6 @@
 #pragma once
 
-#include<cmath>
+#include<algorithm>
 
 /*
 	general purpose position calculator functions
@@ -46,15 +46,54 @@ struct coord2d
 };
 
 
-/*
-	Kindly avoid this function as much as possible its not much efficient
-*/
+// 1 / sqrt() very efficient O(1) [copied]
 
-template <class type>
-
-inline type dist2d(type x1, type y1, type x2, type y2)
+double Q_inv_sqrt(double a)
 {
-	return static_cast <type> (std::sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)) + 1);
+    uint64_t ai;
+
+    double _3_2 = 1.5, a_2 = a * .5;
+
+    /*
+        loading the bit representation of 'a' into 'ai'
+        so that we can manipulate it
+    */
+
+    ai = *(uint64_t *) &a;
+
+    /*
+        generating floating point representation bitpattern of
+        the inverse sqroot (approx) of 'a' using a spooky technique
+    */
+
+    ai = 0x5FE6F7CED916872B - (ai >> 1);
+
+    /*
+        getting back the floating point number in the bit
+        pattern 'ai' i.e., inverse sqroot (approx) of 'a'
+    */
+
+    a = *(double *) &ai;
+
+    /*
+        now using newton raption formula to make 'a' more accurate
+    */
+
+    a = a * (_3_2 - a_2 * a * a);
+
+    a = a * (_3_2 - a_2 * a * a);    // repreat it to get more accurate 'a'
+
+    a = a * (_3_2 - a_2 * a * a);    // repreat it to get more accurate 'a'
+
+    return a;
+}
+
+
+// very efficient function to get distance between 2 points
+
+inline double dist2d(double x1, double y1, double x2, double y2)
+{
+	return 1 / Q_inv_sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
 
 
