@@ -110,15 +110,14 @@ class bb::GAME_LOOP
 		FRAME_RATE_STABILIZER.initialize();	// run with stabilized fps
 
 		do{
-
-			fps = 1 / FRAME_RATE_STABILIZER.dt;
-
 			// >>>> graphics rendering system
 
 			{
 				// waiting for render to be unlocked
 
 				while(lock == false);
+
+				fps = 1 / FRAME_RATE_STABILIZER.dt;
 
 				Clear();  // to clear the default frame or canvas
 

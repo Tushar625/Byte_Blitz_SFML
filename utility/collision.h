@@ -5,6 +5,8 @@
 
 #include<algorithm>
 
+#include<limits>
+
 /*
 
 	Here I provide some functions and structure to make collision detection easier
@@ -94,9 +96,6 @@ inline bool circle_aabb_collision(double& xp, double& yp, double xc, double yc, 
 	
 	(to check if the point is on a corner, say, Top Left, check if top and left both are true, in
 	the returned structure)
-
-	note, as floating point numbers are not very precise we check for the difference to determine
-	equality, default difference is .0001, you can change it
 */
 
 struct collision_box_side_metric
@@ -104,7 +103,7 @@ struct collision_box_side_metric
 	bool left, right, top, bottom;
 };
 
-inline collision_box_side_metric circle_aabb_collision_side(double xp, double yp, double xb, double yb, double width, double height, double difference = .0001)
+inline collision_box_side_metric circle_aabb_collision_side(double xp, double yp, double xb, double yb, double width, double height)
 {
 	collision_box_side_metric cd;
 	
@@ -113,13 +112,13 @@ inline collision_box_side_metric circle_aabb_collision_side(double xp, double yp
 		instead we check for the difference
 	*/
 
-	cd.left = std::abs(xp - xb) < difference;
+	cd.left = std::abs(xp - xb) < std::numeric_limits<double>::epsilon();
 	
-	cd.right = std::abs(xp - xb - width) < difference;
+	cd.right = std::abs(xp - xb - width) < std::numeric_limits<double>::epsilon();
 	
-	cd.top = std::abs(yp - yb) < difference;
+	cd.top = std::abs(yp - yb) < std::numeric_limits<double>::epsilon();
 
-	cd.bottom = std::abs(yp - yb - height) < difference;
+	cd.bottom = std::abs(yp - yb - height) < std::numeric_limits<double>::epsilon();
 
 	return cd;
 }
