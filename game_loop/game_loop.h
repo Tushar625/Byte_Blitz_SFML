@@ -27,7 +27,9 @@
 
 	=> bool Create()
 
-	This is to initialize the game before starting the game loop
+	This is to initialize the game before starting the game loop, this
+	should be used to provide a safe entry point for the game loop not
+	to load any game assets like sprites or sounds etc.
 
 	It should return 'SUCCESS' if the game is initialised successfully
 	else return '!SUCCESS'
