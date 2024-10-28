@@ -13,11 +13,14 @@
 #include"system/input.h"
 
 
-int arg_count;	// to accept no. of command line arguments
+namespace bb
+{
+	int arg_count;	// to accept no. of command line arguments
 
-char **arg;	// to accept command line arguments
+	char **arg;	// to accept command line arguments
 
-int return_value = 0;	// value to be returned when the program ends
+	int return_value = 0;	// value to be returned when the program ends
+}
 
 
 /*
@@ -115,7 +118,16 @@ int return_value = 0;	// value to be returned when the program ends
 	If you want to redefine only "Create(), Update() and Render()", you don't need to define any macro
 */
 
-class Game : public GAME_LOOP
+
+namespace bb
+{
+	class Game;
+
+	extern class Game MY_GAME;
+}
+
+
+class bb::Game : public bb::GAME_LOOP
 {
 	bool Create() override;
 
@@ -133,7 +145,7 @@ class Game : public GAME_LOOP
 	void Render_Thread_Init() override;
 
 
-    void Clear() override;
+	void Clear() override;
 
 
 	#ifndef NO_GAME_RENDER
@@ -143,7 +155,7 @@ class Game : public GAME_LOOP
 	#endif
 
 
-    void Print() override;
+	void Print() override;
 
 
 	#ifdef GAME_DESTROY
@@ -169,7 +181,7 @@ class Game : public GAME_LOOP
 	{
 		WINDOW.close();
 	}
-} MY_GAME;	// object representing the core of this this game
+} bb::MY_GAME;	// object representing the core of this this game
 
 
 /*
@@ -179,7 +191,7 @@ class Game : public GAME_LOOP
 
 #ifndef GAME_INPUT
 
-	inline void Game::Input()
+	inline void bb::Game::Input()
 	{
 		INPUT.scan();
 	}
@@ -189,7 +201,7 @@ class Game : public GAME_LOOP
 
 #ifndef GAME_RENDER_THREAD_INIT
 
-	inline void Game::Render_Thread_Init()
+	inline void bb::Game::Render_Thread_Init()
 	{
 		// activate the window's context in render thread
 
@@ -201,7 +213,7 @@ class Game : public GAME_LOOP
 
 #ifndef GAME_CLEAR
 
-	inline void Game::Clear()
+	inline void bb::Game::Clear()
 	{
 		WINDOW.clear(sf::Color(0, 0, 0));
 	}
@@ -211,7 +223,7 @@ class Game : public GAME_LOOP
 
 #ifndef GAME_PRINT
 
-	inline void Game::Print()
+	inline void bb::Game::Print()
 	{
 		WINDOW.display();
 	}
@@ -237,11 +249,11 @@ class Game : public GAME_LOOP
 
 int USE_MAIN(int arg_count, char *arg[])
 {
-	::arg_count = arg_count;
+	bb::arg_count = arg_count;
 
-	::arg = arg;
+	bb::arg = arg;
 
-	MY_GAME.start_game();
+	bb::MY_GAME.start_game();
 
-	return return_value;
+	return bb::return_value;
 }

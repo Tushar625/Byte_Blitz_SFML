@@ -79,7 +79,13 @@
 */
 
 
-class GAME_LOOP
+namespace bb
+{
+	class GAME_LOOP;
+}
+
+
+class bb::GAME_LOOP
 {
 	FPS_CONTROL FRAME_RATE_STABILIZER;
 

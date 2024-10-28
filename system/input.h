@@ -14,7 +14,15 @@
 #include"window.h"
 
 
-class InputClass
+namespace bb
+{
+	class InputClass;
+
+	extern class InputClass INPUT;
+}
+
+
+class bb::InputClass
 {
 	sf::Keyboard::Scan::Scancode m_key;	// the pressed or released key
 
@@ -159,4 +167,4 @@ public:
 		return sf::Mouse::getPosition(WINDOW);
 	}
 
-} INPUT;
+} bb::INPUT;
