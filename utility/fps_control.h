@@ -59,7 +59,7 @@ class FPS_CONTROL
 {
     std::chrono::duration<double> required_delay, actual_delay;
 
-    std::chrono::time_point<std::chrono::steady_clock, std::chrono::duration<double>> clk_now, clk_previous, clk_previous_for_actual_delay; 
+    std::chrono::time_point<std::chrono::steady_clock, std::chrono::duration<double>> clk_now, clk_previous;
 
     public:
 
@@ -90,7 +90,7 @@ class FPS_CONTROL
 
     void initialize()
     {
-        clk_previous_for_actual_delay = clk_previous = std::chrono::steady_clock::now();
+        clk_previous = std::chrono::steady_clock::now();
 
         dt = 0;
     }
@@ -133,15 +133,13 @@ class FPS_CONTROL
 
         for(clk_now = std::chrono::steady_clock::now(); (std::chrono::steady_clock::now() - clk_now) < actual_delay;);    // implementing actual delay
 
-        clk_previous = std::chrono::steady_clock::now();
-
         // calculating actual elapsed time in an iteration
 
-        clk_now = clk_previous;
+        clk_now = std::chrono::steady_clock::now();
 
-        actual_delay = clk_now - clk_previous_for_actual_delay;
+        actual_delay = clk_now - clk_previous;
 
-        clk_previous_for_actual_delay = clk_now;
+        clk_previous = clk_now;
 
         dt = actual_delay.count();
 	}

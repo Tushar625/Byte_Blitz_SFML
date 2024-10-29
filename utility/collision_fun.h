@@ -46,10 +46,6 @@ inline bool aabb_collision(double x1, double y1, double width1, double height1, 
 	returns "true" => they collided, "false" => no collision
 
 	also returns the point of collision via, return by reference
-
-	note that, (xp, yp) are floating point numbers (double) so you can't use "==" to check
-	if they are equal to xb, xb + width or yb, yb + height, you must get the difference
-	between them, if that is smaller than certain value (say .0001), they are equal
 */
 
 inline bool circle_aabb_collision(double& xp, double& yp, double xc, double yc, double radius, double xb, double yb, double width, double height)
@@ -86,39 +82,4 @@ inline bool circle_aabb_collision(double& xp, double& yp, double xc, double yc, 
 	auto dist = dist2d(center.x, center.y, nearest_point.x, nearest_point.y);
 
 	return dist < radius;
-}
-
-/*
-	circle_aabb_collision() returns the position of collision, following function tells,
-	the point is on which side of the box
-
-	this function returns "collision_box_side_metric" structure to indicate the side of collision
-	
-	(to check if the point is on a corner, say, Top Left, check if top and left both are true, in
-	the returned structure)
-*/
-
-struct collision_box_side_metric
-{
-	bool left, right, top, bottom;
-};
-
-inline collision_box_side_metric circle_aabb_collision_side(double xp, double yp, double xb, double yb, double width, double height)
-{
-	collision_box_side_metric cd;
-	
-	/*
-		as floating point numbers are not very precise we cannot check for equality
-		instead we check for the difference
-	*/
-
-	cd.left = std::abs(xp - xb) < std::numeric_limits<double>::epsilon();
-	
-	cd.right = std::abs(xp - xb - width) < std::numeric_limits<double>::epsilon();
-	
-	cd.top = std::abs(yp - yb) < std::numeric_limits<double>::epsilon();
-
-	cd.bottom = std::abs(yp - yb - height) < std::numeric_limits<double>::epsilon();
-
-	return cd;
 }

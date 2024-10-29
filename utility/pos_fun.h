@@ -2,6 +2,8 @@
 
 #include<algorithm>
 
+#include<type_traits>
+
 /*
 	general purpose position calculator functions
 */
@@ -44,6 +46,30 @@ struct coord2d
 		return coord2d(x - pt.x, y - pt.y);
 	}
 };
+
+
+/*
+	get closest int of a floating point number
+*/
+
+template<class type_out = int, class type_in = double>
+
+inline type_out closest(type_in x)
+{
+	return (x >= 0) ? (type_out)(x + .5) : (type_out)(x - .5);
+}
+
+
+/*
+	if x is between Lrng and Hrng it gives 1 else 0
+*/
+
+template<class type>
+
+inline bool in_rng(type Lrng, type x, type Hrng)
+{
+	return (x >= Lrng && x <= Hrng);
+}
 
 
 // 1 / sqrt() very efficient O(1) [copied]
@@ -95,6 +121,9 @@ inline double dist2d(double x1, double y1, double x2, double y2)
 {
 	return 1 / Q_inv_sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2));
 }
+
+
+/*~~~~~~ Following Functions are designed to deal with Integer type data only ~~~~~~*/
 
 
 /*
@@ -243,6 +272,8 @@ template<class type>
 
 inline type get_diameter(type radius)
 {
+	static_assert(std::is_integral_v<type>, "Only integral types are allowed");
+
 	radius = abs(radius);
 
 	return radius + radius - 1;
@@ -253,6 +284,8 @@ template<class type>
 
 inline type get_radius(type diameter)
 {
+	static_assert(std::is_integral_v<type>, "Only integral types are allowed");
+
 	diameter = abs(diameter);
 
 	if((diameter & 1) == 0)
@@ -264,7 +297,7 @@ inline type get_radius(type diameter)
 
 // used to set the position of a sepcific coordinate in following functions
 
-enum COORD_POSITION {TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT, CENTER, TOP_CENTER, BOTTOM_CENTER, LEFT_CENTER, RIGHT_CENTER, TOP, BOTTOM, LEFT, RIGHT};
+enum COORD_POSITION {TOP_LEFT, TOP_RIGHT, BOTTOM_RIGHT, BOTTOM_LEFT, CENTER, TOP_CENTER, BOTTOM_CENTER, LEFT_CENTER, RIGHT_CENTER};
 
 
 /*
@@ -278,6 +311,8 @@ template<class type>
 
 inline bool to_top_left(type &xout, type &yout, type xin, type yin, type height, type width, COORD_POSITION pos = TOP_LEFT)
 {
+	static_assert(std::is_integral_v<type>, "Only integral types are allowed");
+
 	if(height <= 0 || width <= 0)
 	{
 		return false;
@@ -325,6 +360,8 @@ template<class type>
 
 inline bool from_top_left(type &xout, type &yout, type xin, type yin, type height, type width, COORD_POSITION pos = TOP_LEFT)
 {
+	static_assert(std::is_integral_v<type>, "Only integral types are allowed");
+
 	if(height <= 0 || width <= 0)
 	{
 		return false;
@@ -358,28 +395,4 @@ inline bool from_top_left(type &xout, type &yout, type xin, type yin, type heigh
 	}
 
 	return true;
-}
-
-
-/*
-	get closest int of a floating point number
-*/
-
-template<class type_out = int, class type_in = double>
-
-inline type_out closest(type_in x)
-{
-	return (x >= 0) ? (type_out)(x + .5) : (type_out)(x - .5);
-}
-
-
-/*
-	if x is between Lrng and Hrng it gives 1 else 0
-*/
-
-template<class type>
-
-inline bool in_rng(type Lrng, type x, type Hrng)
-{
-	return (x >= Lrng && x <= Hrng);
 }
