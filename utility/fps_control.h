@@ -55,7 +55,12 @@
     stabilized so, set the fps according to the capability of your system
 */
 
-class FPS_CONTROL
+namespace bb
+{
+	class FPS_CONTROL;
+}
+
+class bb::FPS_CONTROL
 {
     std::chrono::duration<double> required_delay, actual_delay;
 

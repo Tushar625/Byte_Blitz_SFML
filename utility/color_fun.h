@@ -4,6 +4,10 @@
 
 
 
+namespace bb{
+
+
+
 /*
 	general purpose rgb color handling functions
 */
@@ -50,9 +54,7 @@ struct rgb
 
 inline unsigned char brightness(unsigned char x, double amount)
 {
-	using std::min;
-
-	return min(255U, (unsigned)(x * amount + .5));
+	return std::min(255U, (unsigned)(x * amount + .5));
 }
 
 inline rgb brightness(rgb x, double amount)
@@ -95,3 +97,7 @@ inline bool is_valid_opacity(double opacity)
 {
 	return (opacity >= 0 && opacity <= 1);
 }
+
+
+
+} // namespace bb

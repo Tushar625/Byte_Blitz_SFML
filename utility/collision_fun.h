@@ -7,6 +7,9 @@
 
 #include<limits>
 
+
+namespace bb{
+
 /*
 
 	Here I provide some functions and structure to make collision detection easier
@@ -83,3 +86,5 @@ inline bool circle_aabb_collision(double& xp, double& yp, double xc, double yc, 
 
 	return dist < radius;
 }
+
+} // namespace bb

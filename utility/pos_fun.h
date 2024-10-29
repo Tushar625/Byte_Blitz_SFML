@@ -4,9 +4,14 @@
 
 #include<type_traits>
 
+
+namespace bb{
+
+
 /*
 	general purpose position calculator functions
 */
+
 
 /*
 	here we have structure to represent 2D coordinates but notice
@@ -396,3 +401,6 @@ inline bool from_top_left(type &xout, type &yout, type xin, type yin, type heigh
 
 	return true;
 }
+
+
+} // namespace bb

@@ -8,7 +8,9 @@
 
 // source: https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition/
 
-namespace flx {
+namespace bb{
+
+namespace flx{
 
 // instead of '==' or '!=' use these with floating point numbers
 
@@ -70,4 +72,6 @@ bool ulp_eq(T a, T b, int max_ulp_difference = 1) noexcept
 	return ((ai < 0) == (bi < 0)/*sign check*/) && std::abs(ai - bi) <= max_ulp_difference;
 }
 
-}	// namespace end
+}	// namespace flx
+
+} // namespace bb
