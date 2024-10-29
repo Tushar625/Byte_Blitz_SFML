@@ -20,6 +20,10 @@ namespace bb
 	char **arg;	// to accept command line arguments
 
 	int return_value = 0;	// value to be returned when the program ends
+
+	class Game;
+
+	extern class Game MY_GAME;
 }
 
 
@@ -117,14 +121,6 @@ namespace bb
 
 	If you want to redefine only "Create(), Update() and Render()", you don't need to define any macro
 */
-
-
-namespace bb
-{
-	class Game;
-
-	extern class Game MY_GAME;
-}
 
 
 class bb::Game : public bb::GAME_LOOP

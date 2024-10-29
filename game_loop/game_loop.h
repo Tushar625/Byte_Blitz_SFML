@@ -15,6 +15,12 @@
 #define STOP_GAME_LOOP 1
 
 
+namespace bb
+{
+	class GAME_LOOP;
+}
+
+
 /*
 	How it works:-
 
@@ -77,12 +83,6 @@
 	It should return 'SUCCESS' if the game is destroyed successfully
 	else return '!SUCCESS', in this case we start the game loop again
 */
-
-
-namespace bb
-{
-	class GAME_LOOP;
-}
 
 
 class bb::GAME_LOOP

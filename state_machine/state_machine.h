@@ -3,6 +3,14 @@
 #include<limits>
 
 
+namespace bb
+{
+	class BASE_STATE;
+
+	class STATE_MACHINE;
+}
+
+
 /*
 	how to use:
 
@@ -129,7 +137,7 @@
 	virtual methods as per their requirements
 */
 
-class BASE_STATE
+class bb::BASE_STATE
 {
 	public:
 
@@ -154,7 +162,7 @@ class BASE_STATE
 	current state
 */
 
-class STATE_MACHINE
+class bb::STATE_MACHINE
 {
 	/*
 		points to the current states or points to NULL if no current state given

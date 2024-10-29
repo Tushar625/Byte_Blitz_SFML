@@ -4,6 +4,12 @@
 #include<chrono>
 
 
+namespace bb
+{
+	class FPS_CONTROL;
+}
+
+
 /*
 	this class is to be used to control the fps in a loop
 	say game loop
@@ -54,11 +60,6 @@
     limitations of the system where this class is used, the fps will not be
     stabilized so, set the fps according to the capability of your system
 */
-
-namespace bb
-{
-	class FPS_CONTROL;
-}
 
 class bb::FPS_CONTROL
 {

@@ -5,6 +5,14 @@
 #include<utility>
 
 
+namespace bb
+{
+	class BUTTON;
+
+	class BUTTON_LIST;
+}
+
+
 /*
     this is a general purpose prototype of button in c++
     this is made to be compatible with different game engines as it never contains any
@@ -31,7 +39,7 @@
 
 // main general purpose button class
 
-class BUTTON
+class bb::BUTTON
 {
     private:
 
@@ -426,7 +434,7 @@ class BUTTON
 	respectively
 */
 
-class BUTTON_LIST
+class bb::BUTTON_LIST
 {
 	/*
 		its an array of pointers to button objects or buttons
