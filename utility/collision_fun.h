@@ -3,6 +3,8 @@
 
 #include"pos_fun.h"
 
+#include"float_fun.h"
+
 #include<algorithm>
 
 #include<limits>
@@ -85,6 +87,67 @@ inline bool circle_aabb_collision(double& xp, double& yp, double xc, double yc, 
 	auto dist = dist2d(center.x, center.y, nearest_point.x, nearest_point.y);
 
 	return dist < radius;
+}
+
+/*
+    circle_aabb_collision() returns the position of collision, following function tells,
+    the point is on which side of the box
+
+    this function returns "collision_box_side_metric" structure to indicate the side of collision
+    
+    (to check if the point is on a corner, say, Top Left, check if top and left both are true, in
+    the returned structure)
+
+	it also places the circle out side the aabb, by taking top left (x, y) [consider the circle is
+	in a box] and diameter of the circle and modifying the top left point
+
+	it also provides a way to put some space between the circle and the box while after collision
+	position of the circle is calculated
+*/
+
+struct collision_box_side_metric
+{
+    bool left, right, top, bottom;
+};
+
+inline collision_box_side_metric circle_aabb_collision_side(double& x, double& y, double dia, double xp, double yp, double xb, double yb, double width, double height)
+{
+    collision_box_side_metric cd;
+    
+    /*
+        as floating point numbers are not very precise we cannot check for equality
+        instead we check for the difference
+    */
+
+    cd.left = flx::relep_eq(xp, xb);
+    
+    cd.right = flx::relep_eq(xp, xb + width);
+    
+    cd.top = flx::relep_eq(yp, yb);
+
+    cd.bottom = flx::relep_eq(yp, yb + height);
+
+	if (cd.left)
+	{
+		x -= x + dia - xp;
+	}
+
+	if (cd.right)
+	{
+		x += xp - x;
+	}
+
+	if (cd.top)
+	{
+		y -= y + dia - yp;
+	}
+
+	if (cd.bottom)
+	{
+		y += yp - y;
+	}
+
+    return cd;
 }
 
 } // namespace bb
