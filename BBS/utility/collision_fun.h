@@ -127,24 +127,104 @@ inline collision_box_side_metric circle_aabb_collision_side(double& x, double& y
 
     cd.bottom = flx::relep_eq(yp, yb + height);
 
+	// top left
+
+	if(cd.top && cd.left && !flx::relep_eq(std::abs(y + dia - yp), std::abs(x + dia - xp)))
+	{
+		if(std::abs(y + dia - yp) > std::abs(x + dia - xp))
+		{
+			// left collision 
+
+			cd.top = false;
+		}
+		else
+		{
+			// top collision
+
+			cd.left = false;
+		}
+	}
+
+	// top right
+
+	else if(cd.top && cd.right && !flx::relep_eq(std::abs(y + dia - yp), std::abs(xp - x)))
+	{
+		if(std::abs(y + dia - yp) > std::abs(xp - x))
+		{
+			// right collision 
+
+			cd.top = false;
+		}
+		else
+		{
+			// top collision
+
+			cd.right = false;
+		}
+	}
+
+	// bottom left
+
+	else if(cd.bottom && cd.left && !flx::relep_eq(std::abs(yp - y), std::abs(x + dia - xp)))
+	{
+		if(std::abs(yp - y) > std::abs(x + dia - xp))
+		{
+			// left collision 
+
+			cd.bottom = false;
+		}
+		else
+		{
+			// bottom collision
+
+			cd.left = false;
+		}
+	}
+
+	// bottom right
+
+	else if(cd.bottom && cd.right && !flx::relep_eq(std::abs(yp - y), std::abs(xp - x)))
+	{
+		if(std::abs(yp - y) > std::abs(xp - x))
+		{
+			// right collision
+
+			cd.bottom = false;
+		}
+		else
+		{
+			// bottom collision
+			
+			cd.right = false;
+		}
+	}
+
 	if (cd.left)
 	{
-		x -= x + dia - xp;
+		// x -= x + dia - xp;
+
+		x = xp - dia;
 	}
 
 	if (cd.right)
 	{
-		x += xp - x;
+		// x += xp - x;
+
+		x = xp;
 	}
 
 	if (cd.top)
 	{
-		y -= y + dia - yp;
+		// y -= y + dia - yp;
+
+		y = yp - dia;
 	}
 
 	if (cd.bottom)
 	{
-		y += yp - y;
+		// y += yp - y;
+
+		y = yp;
 	}
 
     return cd;
