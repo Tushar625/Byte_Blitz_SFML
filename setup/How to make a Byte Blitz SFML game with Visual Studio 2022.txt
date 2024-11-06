@@ -1,0 +1,235 @@
+     ______________________________________
+    |______________________________________|
+    //                                   //|
+   //    Setup Byte Blitz SFML Game     // /
+  //       {Visual Studio 2022}        // / 
+ //                                   // /
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~// /
+|_____________________________________|/
+
+
+I usually use "Visual Studio 2022" to make games with "Byte Blitz SFML". In this document I shall
+explain in details how I setup the visual studio project for this game engine.
+
+{} Note:
+
+This game engine is in early development phase so, don't hasitate to modify the setup process as
+per your need, I only mention the setup process that has worked for me.
+
+
+===============
+Install "vcpkg"
+===============
+
+
+First, make sure that you have "Visual Studio 2022" and "Git" installed. Now, open "cmd" from the
+folder where you want to keep "vcpkg" and run,
+
+<=> "git clone https://github.com/microsoft/vcpkg.git"
+
+This will create vcpkg folder inside current folder, open vcpkg folder, and execute the bootstrap
+script
+
+<=> "cd vcpkg"
+<=> ".\bootstrap-vcpkg.bat"
+
+The "bootstrap script" performs prerequisite checks and downloads the vcpkg executable. Now, "vcpkg"
+is ready to use.
+
+{} Note: 
+
+We shall run all the "vcpkg" commands from this vcpkg folder as we have not added vcpkg folder to
+environment variable "PATH" to keep this manual simple.
+
+Now, link "vcpkg" installation with existing installation of Visual Studio 2022
+
+<=> ".\vcpkg integrate install"
+
+You can also unlink "vcpkg" installation from Visual Studio 2022, if needed, though it's not necessary
+now
+
+<=> ".\vcpkg integrate remove"
+
+{} Note:
+
+You can actually move this vcpkg folder to a new location after unlinking it, just don’t forget to
+link it up again before using it.
+
+There’s a good video tutorial: https://youtube.com/watch?v=0h1lC3QHLHU&si=errT1UujH6AcZxOM
+
+
+===========================
+Install "SFML" with "vcpkg"
+===========================
+
+
+To install latest version of "SFML" simply run the following commands
+
+<=> ".\vcpkg install sfml"
+
+This was enough to get "SFML" running, no additional settings needed (I created an empty project and
+ran the example code provided here, https://www.sfml-dev.org/tutorials/2.6/start-vc.php , without
+any changes to the project properties).
+
+Visit: https://learn.microsoft.com/en-us/vcpkg/commands/install
+
+Later, some problems occurred when I tried to link "SFML" statically, I fixed it with the following
+command
+
+<=> ".\vcpkg install sfml:x64-windows-static"
+
+Visit: https://devblogs.microsoft.com/cppblog/vcpkg-updates-static-linking-is-now-available/
+
+{} Note:
+
+Linking "SFML" statically needs some settings changes in project properties, I discuss them later.
+
+
+=====================================
+Creating "Visual Studio 2022" project
+=====================================
+
+
+First, we create a folder ("root") to keep our project, that will contain 3 other folders:
+
+	"Source" Folder containing all the source files (including header files) necessary for the game.
+	If you want to create a repository for your project create it inside this "Source" folder. I also
+	provide a general format of source code for this game engine, inside setup folder, you can copy
+	and paste it over to the "Source" folder of your project, to avoid some pain :).
+
+	"Output" Folder containing the output file generated. Keep the resources (font, image or audio files)
+	used by the game in this folder. If you create a repository in "Source" folder I recommand you to keep
+	a copy of these resources in that repository too.
+
+	"Project" Folder created by Visual Studio, that contains the solution and project files. To create it,
+	
+		Open "Visual Studio 2022" -> "Create a new project" -> "Empty Project" template.
+	
+		In subsequent menu,
+		
+			Tick "Place solution and project in the same directory",
+			
+			Enter absolute path to the "root" folder as "Location",
+			
+			Set a suitable name for your project,
+			
+			Click "Create".
+
+{} Note:
+
+You can change the names of "Source" and "Output" folders, as you need. There’s no rule for that. If
+you ask me, I only change "Source" to "Project_name_Source", that works well for me.
+
+
+=======================================
+Setting up "Visual Studio 2022" project
+=======================================
+
+
+Using Visual Studio we can build our project either in "Debug" or "Release" mode. While developing our
+application we use "Debug" mode, but we switch to "Release" mode if we want to publish or share a prototype
+or finished application. You can switch between modes from "Build" -> "Configuration Manager" or directly
+from the title bar. Use "x64" as platform.
+
+Now that, we know about different modes, we can proceed to change some of our project properties.
+
+Open "Project" -> "Project_name Properties"
+
+Set "Configuration" to "All Configurations" and "Platform" to "All Platforms" to set geveral properties.
+
+	Under "Configuration Properties" ->"Configuration Properties" ->
+
+	Setting C/C++ Standard:
+
+		{} "General" -> "C++ Language Standard" : "ISO C++20 Standard"
+
+		{} "General" -> "C Language Standard"   : "ISO C17 (2018) Standard"
+
+	Setting the diretory where we put our output (.exe) file
+
+		{} "General" -> "Output Directory"      : "$(SolutionDir)\..\Output\"
+
+	Telling debugger in which directory we keep our output (.exe) file and other resources (image or audio files)
+
+		{} "Debugging" -> "Working Directory"   : "$(SolutionDir)\..\Output\"
+
+	Showing compiler the 'path' to the directory containing "Byte_Blitz_SFML" game engine
+
+		{} "C/C++" -> "General" -> "Additional Include Directories" : (add) "absolute path to Byte_Blitz_SFML folder"
+
+	Adding _CRT_SECURE_NO_WARNINGS macro to prevents compiler from displaying some silly errors and warnings
+
+		{} "C/C++" -> "Preprocessor" -> "Preprocessor Definitions"  : (add) "_CRT_SECURE_NO_WARNINGS"
+
+Now, set "Configuration" to "Debug" and "Platform" to "All Platforms" to set some properties specific to
+the "Debug" mode.	
+	
+	Setting "vcpkg" for dynamic linking
+
+		{} "vcpkg" -> "Use Static Libraries" : "No"
+
+		{} "vcpkg" -> "Use Dynamic CRT"      : "Yes"
+
+	Linking standard libraries dynamically
+
+		{} "C/C++" -> "Code Generation" -> "Runtime Library" : "Multi-threaded Debug DLL (/MDd)"
+
+	Setting subsystem as console, as this provides a console window where we can print stuffs with std::cout,
+	very help for debugging
+
+		{} "Linker" -> "System" -> "Subsystem"               : "Console"
+
+Now, set "Configuration" to "Release" and "Platform" to "All Platforms" to set some properties specific to
+the "Release" mode.
+
+	Setting "vcpkg" for static linking
+
+		{} "vcpkg" -> "Use Static Libraries" : "Yes"
+
+		{} "vcpkg" -> "Use Dynamic CRT"      : "No"
+
+	Linking static versions of standard libraries
+
+		{} "C/C++" -> "Code Generation" -> "Runtime Library"       : "Multi-threaded (/MT)"
+
+	Adding SFML_STATIC macro to link to static versions of SFML libraries, getting rid of its dlls
+
+		{} "C/C++" -> "Preprocessor" -> "Preprocessor Definitions" : (add) "SFML_STATIC"
+
+	Setting subsystem as windows, as we want to release the game as a Windows Application
+
+		{} "Linker" -> "System" -> "Subsystem"                     : "Windows"
+
+	Adding winmm.lib library, else some errors show up
+
+		{} "Linker" -> "Input" -> "Addional Dependencies"          : (add) "winmm.lib"
+
+Now you should export these settings as a template, with, "Project" -> "Export Template...", so that you don't
+have to set these everytime you make a B.B.S. (Byte Blitz SFML) game. Next time you make a game select this
+template instead of "Empty Project".
+
+
+================================================
+Adding Source files "Visual Studio 2022" project
+================================================
+
+
+Now, we create our source files and the header files in "Source" Folder, and add the source files to the project
+as existing items, with, "Solution Explorer" -> right ckick "Source Files" -> "Add" -> "Existing Items".
+
+I usually copy the general template provided in the Setup folder of this game engine and paste it in the "Source"
+folder and rename it, "main.cpp", create necessary header files, include them into "main.cpp" and add the "main.cpp"
+to my project. Set "Debug" or "Release" Configuration, "x64" platform, and compile or build ("Build" -> "Build Solution").
+
+{} Note:
+
+In "Release" Configuration we create a Windows application so "main()" has to be replaced with "WinMain()" but this game
+engine, by design, doesn't let user to define main(), so I keep a macro "USE_MAIN" to set the main(), by default it is
+set to "main" to change main function to "WinMain()" just add "#define USE_MAIN WinMain" before including "BBS/game.h".
+I would suggest to add something like this before including "BBS/game.h",
+
+#ifdef NDEBUG	// indicate "Release" Configuration in Visual Studio
+
+#define USE_MAIN WinMain
+
+#endif

@@ -131,9 +131,11 @@ inline collision_box_side_metric circle_aabb_collision_side(double& x, double& y
 
 	if(cd.top && cd.left)
 	{
-		double dy = (y + dia - yp);
+		double dy = (y + dia - yp);	// distance between two horizontal colliding edges
 
-		double dx = (x + dia - xp);
+		double dx = (x + dia - xp); // distance between two vertical colliding edges
+
+		// it's a top left collision only if two distances are equal
 
 		if(!flx::relep_eq(dy, dx))
 		{
