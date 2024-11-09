@@ -15,6 +15,20 @@ class bb::Firecracker : public sf::Drawable
 {
 public:
 
+	void clear()
+	{
+		m_particles.clear();
+
+		m_dAlpha.clear();
+
+		m_velocity.clear();
+	}
+
+	bool empty()
+	{
+		return m_particles.empty();
+	}
+
 	/*
 		create a new perticle effect at a new source point
 
@@ -24,7 +38,7 @@ public:
 
 	void create(sf::Vector2f source, sf::Color color = sf::Color::White, int count = 1000, double span = 100, double lifeTime = 1)
 	{
-		// reserve space for new vertices
+		// reserve space for new particles
 
 		m_particles.reserve(m_particles.size() + count);
 
@@ -119,11 +133,7 @@ public:
 		{
 			// every one has alpha 0
 
-			m_particles.clear();
-
-			m_dAlpha.clear();
-
-			m_velocity.clear();
+			clear();
 		}
 	}
 
