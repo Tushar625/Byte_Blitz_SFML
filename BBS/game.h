@@ -237,13 +237,8 @@ class bb::Game : public bb::GAME_LOOP
 	!!!! after the game loop starts to run never call this start_game() function again
 */
 
-#ifndef USE_MAIN
 
-#define USE_MAIN main	// redefine this macro to use different main function say, "WinMain"
-
-#endif
-
-int USE_MAIN(int arg_count, char *arg[])
+int main(int arg_count, char *arg[])
 {
 	bb::arg_count = arg_count;
 

@@ -137,7 +137,7 @@ Open "Project" -> "Project_name Properties"
 
 Set "Configuration" to "All Configurations" and "Platform" to "All Platforms" to set geveral properties.
 
-	Under "Configuration Properties" ->"Configuration Properties" ->
+	Under "Configuration Properties" ->
 
 	Setting C/C++ Standard:
 
@@ -200,6 +200,11 @@ the "Release" mode.
 
 		{} "Linker" -> "System" -> "Subsystem"                     : "Windows"
 
+	Adding sfml-main.lib library lets you use the simple "main" function instead of "WinMain" when the subsystem
+	is "Windows"
+
+		{} "Linker" -> "Input" -> "Addional Dependencies"          : (add) "sfml-main.lib"
+	
 	Adding winmm.lib library, else some errors show up
 
 		{} "Linker" -> "Input" -> "Addional Dependencies"          : (add) "winmm.lib"
@@ -220,16 +225,3 @@ as existing items, with, "Solution Explorer" -> right ckick "Source Files" -> "A
 I usually copy the general template provided in the Setup folder of this game engine and paste it in the "Source"
 folder and rename it, "main.cpp", create necessary header files, include them into "main.cpp" and add the "main.cpp"
 to my project. Set "Debug" or "Release" Configuration, "x64" platform, and compile or build ("Build" -> "Build Solution").
-
-{} Note:
-
-In "Release" Configuration we create a Windows application so "main()" has to be replaced with "WinMain()" but this game
-engine, by design, doesn't let user to define main(), so I keep a macro "USE_MAIN" to set the main(), by default it is
-set to "main" to change main function to "WinMain()" just add "#define USE_MAIN WinMain" before including "BBS/game.h".
-I would suggest to add something like this before including "BBS/game.h",
-
-#ifdef NDEBUG	// indicate "Release" Configuration in Visual Studio
-
-#define USE_MAIN WinMain
-
-#endif

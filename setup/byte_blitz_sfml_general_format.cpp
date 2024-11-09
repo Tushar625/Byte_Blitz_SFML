@@ -3,14 +3,6 @@
 	a general format only, you should remove or change any code as you need
 */
 
-#ifdef NDEBUG
-
-// this is to create an windows application in release mode
-
-#define USE_MAIN WinMain
-
-#endif
-
 #define SET_ANTIALIASHING	// this macro allows you to set antialiashing
 
 #include"BBS\game.h"	// mention path to game.h
