@@ -23,7 +23,7 @@ namespace flx{
 
 template<typename T>
 
-bool zero_eq(T a, T b, T absolute_epsilon = std::numeric_limits<T>::epsilon()) noexcept
+inline bool zero_eq(T a, T b, T absolute_epsilon = std::numeric_limits<T>::epsilon()) noexcept
 {
 	static_assert(std::is_floating_point_v<T>, "Only float, double and long double types are allowed");
 
@@ -40,7 +40,7 @@ bool zero_eq(T a, T b, T absolute_epsilon = std::numeric_limits<T>::epsilon()) n
 
 template<typename T>
 
-bool relep_eq(T a, T b, T relative_epsilon = std::numeric_limits<T>::epsilon()) noexcept
+inline bool relep_eq(T a, T b, T relative_epsilon = std::numeric_limits<T>::epsilon()) noexcept
 {
 	static_assert(std::is_floating_point_v<T>, "Only float, double and long double types are allowed");
 
@@ -61,7 +61,7 @@ bool relep_eq(T a, T b, T relative_epsilon = std::numeric_limits<T>::epsilon()) 
 
 template<typename T>	/*T can be float or double*/
 
-bool ulp_eq(T a, T b, int max_ulp_difference = 1) noexcept
+inline bool ulp_eq(T a, T b, int max_ulp_difference = 1) noexcept
 {
 	static_assert(std::is_floating_point_v<T> && sizeof(T) <= 8, "Only float and double types are allowed");
 

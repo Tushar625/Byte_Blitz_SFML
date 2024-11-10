@@ -110,7 +110,7 @@ struct collision_box_side_metric
     bool left, right, top, bottom;
 };
 
-inline collision_box_side_metric circle_aabb_collision_side(double& x, double& y, double dia, double xp, double yp, double xb, double yb, double width, double height)
+inline collision_box_side_metric circle_aabb_collision_side(double& x, double& y, double dia, double xp, double yp, double xb, double yb, double width, double height) noexcept
 {
     collision_box_side_metric cd;
     
