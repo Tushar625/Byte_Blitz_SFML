@@ -246,19 +246,19 @@ class bb::GAME_LOOP
        		return fps;
 		}
 
-		void set_fps(long long target_fps = 30)
+		void set_fps(double target_fps = 30)
     	{
        		FRAME_RATE_STABILIZER.set(target_fps);
 		}
 
-		void set_ups(long long target_ups = 120)
+		void set_ups(double target_ups = 120)
     	{
-			udt = 1.0 / (target_ups);
+			udt = 1 / (target_ups);
 		}
 
 		// call it from the constructor of the game object to start the game
 
-		void start_game(long long target_fps = 30, long long target_ups = 120)	// start_game also sets the fps, default fps is 20.0
+		void start_game(double target_fps = 30, double target_ups = 120)	// start_game also sets the fps, default fps is 20.0
 		{
 			set_fps(target_fps);
 

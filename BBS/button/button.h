@@ -500,7 +500,7 @@ public:
 	{
 		int button_selected = -1;
 
-		int n = button_list.size();
+		size_t n = button_list.size();
 
 		// button input test
 
@@ -525,14 +525,17 @@ public:
 			bindex--;
 
 			if (bindex < 0)
-				bindex = n - 1;
+				bindex = static_cast<int>(n - 1);
 		}
 
 		if (down_pressed)
 		{
 			// we select the next button
 
-			bindex = (bindex + 1) % n;
+			bindex++;
+
+			if (bindex == n)
+				bindex = 0;
 		}
 
 		if (enter_pressed)
@@ -567,7 +570,7 @@ public:
 		bcount: button_count
 	*/
 
-	int get_bcount() const
+	size_t get_bcount() const
 	{
 		return button_list.size();
 	}

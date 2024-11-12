@@ -76,7 +76,7 @@ public:
 
 			// getting components of the velocity
 
-			m_velocity.push_back(sf::Vector2f(sin(angle) * velo, cos(angle) * velo));
+			m_velocity.push_back(sf::Vector2f(static_cast<float>(sin(angle) * velo), static_cast<float>(cos(angle) * velo)));
 
 			m_particles.push_back(sf::Vertex(source, color));
 		}
@@ -95,7 +95,7 @@ public:
 		{
 			// calculating next possible value of alpha
 
-			int alpha = m_particles[i].color.a - m_dAlpha[i] * dt;
+			int alpha = static_cast<int>(m_particles[i].color.a - m_dAlpha[i] * dt);
 
 			if (alpha <= 0)
 			{
@@ -116,13 +116,13 @@ public:
 
 			accn.y = -25 * velocity.y;
 
-			velocity.x += accn.x * dt;
+			velocity.x += static_cast<float>(accn.x * dt);
 
-			velocity.y += accn.y * dt + 200 * dt;	// adding downward accn to simulate gravity
+			velocity.y += static_cast<float>(accn.y * dt + 200 * dt);	// adding downward accn to simulate gravity
 
-			particle.position.x += velocity.x * dt;
+			particle.position.x += static_cast<float>(velocity.x * dt);
 
-			particle.position.y += velocity.y * dt;
+			particle.position.y += static_cast<float>(velocity.y * dt);
 
 			particle.color.a = (alpha <= 0) ? 0 : alpha;
 
