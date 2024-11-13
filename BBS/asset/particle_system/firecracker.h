@@ -44,12 +44,14 @@ public:
 
 		std::vector<double>().swap(m_dAlpha);
 
+		std::vector<double>().swap(m_Alpha);
+
 		std::vector<sf::Vector2f>().swap(m_velocity);
 	}
 
 	bool empty()
 	{
-		return m_particles.empty() && m_dAlpha.empty() && m_velocity.empty();
+		return m_particles.empty() && m_Alpha.empty() && m_dAlpha.empty() && m_velocity.empty();
 	}
 
 	/*
@@ -65,6 +67,8 @@ public:
 
 		m_particles.reserve(m_particles.size() + count);
 
+		m_dAlpha.reserve(m_Alpha.size() + count);
+		
 		m_dAlpha.reserve(m_dAlpha.size() + count);
 
 		m_velocity.reserve(m_velocity.size() + count);
@@ -75,6 +79,8 @@ public:
 
 		for (int i = 0; i < count; i++)
 		{
+			m_Alpha.push_back(255);	// initial alpha of each particle
+
 			/*
 				total alpha is 255.0, so (255.0 / lifeTime) represents the speed of disappearence
 				of the particles
@@ -140,9 +146,9 @@ public:
 
 			// calculating next possible value of alpha
 
-			int alpha = static_cast<int>(m_particles[i].color.a - m_dAlpha[i] * dt);
+			m_Alpha[i] -= m_dAlpha[i] * dt;
 
-			particle.color.a = (alpha <= 0) ? 0 : (flag = false, alpha);
+			particle.color.a = (m_Alpha[i] <= 0) ? 0 : (flag = false, static_cast<uint8_t>(m_Alpha[i]));
 
 			// when all the alpha becomes 0 or less than 0 the flag never set to false and the memeory is deallocated
 		}
@@ -170,6 +176,8 @@ private:
 	std::vector<sf::Vertex> m_particles;
 
 	std::vector<double> m_dAlpha;
+
+	std::vector<double> m_Alpha;
 
 	std::vector<sf::Vector2f> m_velocity;
 };
