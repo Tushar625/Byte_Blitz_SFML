@@ -38,16 +38,18 @@ public:
 
 	void clear()
 	{
-		m_particles.clear();
+		// I do this to make sure that the memory gets deallocated
 
-		m_dAlpha.clear();
+		std::vector<sf::Vertex>().swap(m_particles);
 
-		m_velocity.clear();
+		std::vector<double>().swap(m_dAlpha);
+
+		std::vector<sf::Vector2f>().swap(m_velocity);
 	}
 
 	bool empty()
 	{
-		return m_particles.empty();
+		return m_particles.empty() && m_dAlpha.empty() && m_velocity.empty();
 	}
 
 	/*
@@ -114,15 +116,6 @@ public:
 
 		for (int i = 0; i < m_particles.size(); i++)
 		{
-			// calculating next possible value of alpha
-
-			int alpha = static_cast<int>(m_particles[i].color.a - m_dAlpha[i] * dt);
-
-			if (alpha <= 0)
-			{
-				continue;	// no need to upgrade if alpha is 0
-			}
-
 			// calculating accn according to velocity to simulate drag
 
 			sf::Vector2f accn; 
@@ -145,9 +138,13 @@ public:
 
 			particle.position.y += static_cast<float>(velocity.y * dt);
 
-			particle.color.a = (alpha <= 0) ? 0 : alpha;
+			// calculating next possible value of alpha
 
-			flag = false;
+			int alpha = static_cast<int>(m_particles[i].color.a - m_dAlpha[i] * dt);
+
+			particle.color.a = (alpha <= 0) ? 0 : (flag = false, alpha);
+
+			// when all the alpha becomes 0 or less than 0 the flag never set to false and the memeory is deallocated
 		}
 
 		if (flag)
