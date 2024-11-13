@@ -127,6 +127,11 @@ public:
 
 		for (int i = 0; i < m_particles.size(); i++)
 		{
+			if(m_Alpha[i] < 0)
+			{
+				continue;	// particle has vanished already
+			}
+
 			// calculating accn according to velocity to simulate drag
 
 			sf::Vector2f accn; 
