@@ -5,6 +5,27 @@
 #include<vector>
 
 
+/*
+	To create the explosion or firecracker effect,
+
+	declare an object of Firecracker class
+
+	Firecracker explo;
+
+	and call the create() with appropriate arguments to start an explosion
+
+	explo.create(...);
+
+	call update() and render() of 'explo' from Update() and Render() of game
+	loop to display the effect.
+
+	internal arrays are used to store the particles, create() creates those
+	arrays and update() autometically clears them once the show is over, you
+	can also clear them with clear() and check if they are empty or not with
+	empty()
+*/
+
+
 namespace bb
 {
 	class Firecracker;

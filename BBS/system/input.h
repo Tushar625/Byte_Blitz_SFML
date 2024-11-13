@@ -1,10 +1,10 @@
 
 /*
-	this header file provides two predefined objects of this game engine
+	this header file provides a predefined object to this game engine
 	to take user input
 
-	here we detect only key press and current position of mouse pointer on
-	the window
+	here we detect only key and mouse button press and current position
+	of mouse pointer on the window
 */
 
 
