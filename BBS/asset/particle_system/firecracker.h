@@ -72,7 +72,7 @@ public:
 
 		m_particles.reserve(m_particles.size() + count);
 
-		m_dAlpha.reserve(m_Alpha.size() + count);
+		m_Alpha.reserve(m_Alpha.size() + count);
 		
 		m_dAlpha.reserve(m_dAlpha.size() + count);
 
