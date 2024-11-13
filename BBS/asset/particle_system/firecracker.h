@@ -54,6 +54,11 @@ public:
 		return m_particles.empty() && m_Alpha.empty() && m_dAlpha.empty() && m_velocity.empty();
 	}
 
+	size_t sizeInBytes()
+	{
+		return (sizeof(sf::Vertex) + sizeof(double) + sizeof(double) + sizeof(sf::Vector2f)) * (m_particles.size() + m_Alpha.size() + m_dAlpha.size() + m_velocity.size());
+	}
+
 	/*
 		create a new perticle effect at a new source point
 
