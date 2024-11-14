@@ -60,10 +60,10 @@ public:
 	}
 
 	/*
-		create a new perticle effect at a new source point
+		create a new firecracker effect at a new source point
 
 		create simply increases size of internal arrays to fit more vertices
-		when all the perticles disappear all the arrays are cleared
+		when all the particles disappear all the arrays are cleared
 	*/
 
 	void create(sf::Vector2f source, sf::Color color = sf::Color::White, int count = 1000, double span = 100, double lifeTime = 1)
