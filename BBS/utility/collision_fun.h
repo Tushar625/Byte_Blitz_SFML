@@ -15,6 +15,7 @@ namespace bb{
 /*
 
 	Here I provide some functions and structure to make collision detection easier
+	source: https://learnopengl.com/In-Practice/2D-Game/Collisions/Collision-detection
 
 */
 

@@ -1,0 +1,42 @@
+
+Byte_Blitz_SFML game engine is made of several header files.
+
+These header files performs different kinds of jobs and also contributes to the modular
+design of this game engine.
+
+>>>> These header files can be divided into two types:-
+
+	General purpose header files. (Not specific to this game engine)
+
+	Special purpose header files. (Makes sense inside this game engine only)
+
+>>>> Rules for General purpose header files:-
+
+	Any header file included in a general purpose header file must be a general purpose header file
+	or a standard C++ header file or a SFML header file.
+	
+	Any element defined in a general purpose header file can depend on only the header files directly
+	included in this file
+
+	example:
+
+	let, A.h, B.h, C.h are general purpose header files
+
+	A.h is included into B.h (<A.h>B.h),
+	B.h is included into C.h (<B.h>C.h)
+
+	now any element of C.h must not depend upon A.h
+
+>>>> A general rule for all header files:-
+
+	No. of header files included to a header file must be minimum, no extra unnecessary header files should
+	be included.
+
+	Header files must be self sufficient.
+
+	eg:
+
+	let,
+	A.h is an header file of this game engine
+	You want to include it into B.cpp source file, A.h must not require you to include any extra
+	header file in B.c for it to work

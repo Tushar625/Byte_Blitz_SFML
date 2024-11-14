@@ -97,11 +97,7 @@ platform dependent codes to it and makes it usable.
 	At the end i want to mention 2 special purpose folders
 ]
 
-examples:
-
-Contains several demo games made with this game engine.
-
-extra:
+asset:
 
 Contains some header files, with some experimental classes build upon parts of this game engine.
 The header files under this folder are not included in game.h. Hence, to use them you need to
