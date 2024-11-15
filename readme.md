@@ -28,4 +28,6 @@ I shall create a proper manual discussing more about it in future...
 
 Here, I demonstrate some projects I made with this game engine:
 
-[Firecrackers effect demo](https://www.reddit.com/r/sfml/s/SpdUVcmMU4)
+ - [Firecrackers effect demo](https://www.reddit.com/r/sfml/s/SpdUVcmMU4)
+
+ - [BREAKOUT](https://github.com/Tushar625/BREAKOUT)
