@@ -19,6 +19,7 @@ To know more about how to set it up with Visual Studio 2022, check out **setup_d
  - AABB position functions
  - A particle system to create Firecracker effect
  - User friendly Input and Window management systems
+ - Functions to access windows AppData folder to store and retrive game data 
 
 ***
 
