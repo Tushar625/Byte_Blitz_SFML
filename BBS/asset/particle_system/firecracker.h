@@ -38,15 +38,13 @@ public:
 
 	void clear()
 	{
-		// I do this to make sure that the memory gets deallocated
+		m_particles.clear();
 
-		std::vector<sf::Vertex>().swap(m_particles);
+		m_dAlpha.clear();
 
-		std::vector<double>().swap(m_dAlpha);
+		m_Alpha.clear();
 
-		std::vector<double>().swap(m_Alpha);
-
-		std::vector<sf::Vector2f>().swap(m_velocity);
+		m_velocity.clear();
 	}
 
 	bool empty()
@@ -54,9 +52,11 @@ public:
 		return m_particles.empty() && m_Alpha.empty() && m_dAlpha.empty() && m_velocity.empty();
 	}
 
-	size_t sizeInBytes()
+	// total size reserved in bytes
+
+	size_t capacityInBytes()
 	{
-		return (sizeof(sf::Vertex) + sizeof(double) + sizeof(double) + sizeof(sf::Vector2f)) * (m_particles.size() + m_Alpha.size() + m_dAlpha.size() + m_velocity.size());
+		return (sizeof(sf::Vertex) * m_particles.capacity() + sizeof(double) * m_Alpha.capacity() + sizeof(double) * m_dAlpha.capacity() + sizeof(sf::Vector2f) * m_velocity.capacity());
 	}
 
 	/*
