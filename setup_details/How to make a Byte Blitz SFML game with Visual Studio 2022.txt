@@ -124,7 +124,13 @@ from the title bar. Use "x64" as platform.
 
 Now that, we know about different modes, we can proceed to change some of our project properties.
 
-Open "Project" -> "Project_name Properties"
+{} Note:
+
+	While setting the properties if you can't find "C/C++" option under "Configuration Properties", add a dummy
+	cpp file to your project, with, "Solution Explorer" -> right ckick "Source Files" -> "Add" -> "New Item".
+	Delete this dummy file after all the properties are set.
+
+Open "Project" -> "Properties"
 
 Set "Configuration" to "All Configurations" and "Platform" to "All Platforms" to set geveral properties.
 
@@ -140,6 +146,10 @@ Set "Configuration" to "All Configurations" and "Platform" to "All Platforms" to
 
 		{} "General" -> "Output Directory"      : "$(SolutionDir)\..\Output\"
 
+	Enable manifest mode for "vcpkg"
+
+		{} "vcpkg" -> "Use Vcpkg Manifest"   : Yes
+
 	Telling debugger in which directory we keep our output (.exe) file and other resources (image or audio files)
 
 		{} "Debugging" -> "Working Directory"   : "$(SolutionDir)\..\Output\"
@@ -151,10 +161,6 @@ Set "Configuration" to "All Configurations" and "Platform" to "All Platforms" to
 	Adding _CRT_SECURE_NO_WARNINGS macro to prevents compiler from displaying some silly errors and warnings
 
 		{} "C/C++" -> "Preprocessor" -> "Preprocessor Definitions"  : (add) "_CRT_SECURE_NO_WARNINGS"
-
-	Enable manifest mode for "vcpkg"
-
-		{} "vcpkg" -> "Use Vcpkg Manifest"   : Yes
 
 Now, set "Configuration" to "Debug" and "Platform" to "All Platforms" to set some properties specific to
 the "Debug" mode.	
