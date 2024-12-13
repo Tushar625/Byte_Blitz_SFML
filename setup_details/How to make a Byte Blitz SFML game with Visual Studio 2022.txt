@@ -13,8 +13,8 @@ explain in details how I setup the visual studio project for this game engine.
 
 {} Note:
 
-This game engine is in early development phase so, don't hasitate to modify the setup process as
-per your need, I only mention the setup process that has worked for me.
+	This game engine is in early development phase so, don't hasitate to modify the setup process as
+	per your need, I only mention the setup process that has worked for me.
 
 
 ===============
@@ -22,67 +22,58 @@ Install "vcpkg"
 ===============
 
 
-First, make sure that you have "Visual Studio 2022" and "Git" installed. Now, open "cmd" from the
-folder where you want to keep "vcpkg" and run,
+First, make sure that you have "Visual Studio 2022" and "Git" installed.
+
+Now, open "cmd" from the folder where you want to keep "vcpkg" and run,
 
 <=> "git clone https://github.com/microsoft/vcpkg.git"
 
-This will create vcpkg folder inside current folder, open vcpkg folder, and execute the bootstrap
-script
+This will create vcpkg folder inside current folder.
+
+Now, open vcpkg folder, and execute the bootstrap script,
 
 <=> "cd vcpkg"
 <=> ".\bootstrap-vcpkg.bat"
 
 The "bootstrap script" performs prerequisite checks and downloads the vcpkg executable. Now, "vcpkg"
-is ready to use.
+is ready.
 
 {} Note: 
 
-We shall run all the "vcpkg" commands from this vcpkg folder as we have not added vcpkg folder to
-environment variable "PATH" to keep this manual simple.
+	We shall run all the "vcpkg" commands from this vcpkg folder as we have not added vcpkg folder to
+	environment variable "PATH" to keep this manual simple.
 
-Now, link "vcpkg" installation with existing installation of Visual Studio 2022
+Now, link "vcpkg" installation with existing installation of "Visual Studio 2022"
 
 <=> ".\vcpkg integrate install"
 
-You can also unlink "vcpkg" installation from Visual Studio 2022, if needed, though it's not necessary
+You can also unlink "vcpkg" installation from "Visual Studio 2022", if needed, though it's not necessary
 now
 
 <=> ".\vcpkg integrate remove"
 
 {} Note:
 
-You can actually move this vcpkg folder to a new location after unlinking it, just don’t forget to
-link it up again before using it.
+	You can actually move this vcpkg folder to a new location after unlinking it, just don’t forget to
+	link it up again before using it.
 
 There’s a good video tutorial: https://youtube.com/watch?v=0h1lC3QHLHU&si=errT1UujH6AcZxOM
 
 
-===========================
-Install "SFML" with "vcpkg"
-===========================
+===============
+Update "vcpkg"
+===============
 
 
-To install latest version of "SFML" simply run the following commands
+If you are installing "vcpkg" for the first time, this step is not necessary.
 
-<=> ".\vcpkg install sfml"
+Open "cmd" inside vcpkg folder folder run,
 
-This was enough to get "SFML" running, no additional settings needed (I created an empty project and
-ran the example code provided here, https://www.sfml-dev.org/tutorials/2.6/start-vc.php , without
-any changes to the project properties).
+<=> "git pull"
+<=> ".\bootstrap-vcpkg.bat"
 
-Visit: https://learn.microsoft.com/en-us/vcpkg/commands/install
-
-Later, some problems occurred when I tried to link "SFML" statically, I fixed it with the following
-command
-
-<=> ".\vcpkg install sfml:x64-windows-static"
-
-Visit: https://devblogs.microsoft.com/cppblog/vcpkg-updates-static-linking-is-now-available/
-
-{} Note:
-
-Linking "SFML" statically needs some settings changes in project properties, I discuss them later.
+A simple pull request to the vcpkg github repository to update our local vcpkg repository with latest
+commits. After that bootstrap…
 
 
 =====================================
@@ -117,8 +108,8 @@ First, we create a folder ("root") to keep our project, that will contain 3 othe
 
 {} Note:
 
-You can change the names of "Source" and "Output" folders, as you need. There’s no rule for that. If
-you ask me, I only change "Source" to "Project_name_Source", that works well for me.
+	You can change the names of "Source" and "Output" folders, as you need. There’s no rule for that. If
+	you ask me, I only change "Source" to "Project_name_Source", that works well for me.
 
 
 =======================================
@@ -160,6 +151,10 @@ Set "Configuration" to "All Configurations" and "Platform" to "All Platforms" to
 	Adding _CRT_SECURE_NO_WARNINGS macro to prevents compiler from displaying some silly errors and warnings
 
 		{} "C/C++" -> "Preprocessor" -> "Preprocessor Definitions"  : (add) "_CRT_SECURE_NO_WARNINGS"
+
+	Enable manifest mode for "vcpkg"
+
+		{} "vcpkg" -> "Use Vcpkg Manifest"   : Yes
 
 Now, set "Configuration" to "Debug" and "Platform" to "All Platforms" to set some properties specific to
 the "Debug" mode.	
@@ -214,6 +209,22 @@ have to set these everytime you make a B.B.S. (Byte Blitz SFML) game. Next time 
 template instead of "Empty Project".
 
 
+==================================================
+Install "SFML 2.6.2" with "vcpkg" in manifest mode
+==================================================
+
+
+After the project is created and settings are adjusted properly, we install SFML before adding the source
+files.
+
+To install "SFML 2.6.2" using vcpkg in manifest mode, copy the `vcpkg.json` file from this "setup_details"
+folder and paste it into your project folder.
+
+After that, build the project once with "Debug" Configuration, "x64" platform and once with "Release"
+Configuration, "x64" platform to download and install the required packages into the `vcpkg_installed`
+folder within the project folder. If the installation fails, update vcpkg and try again.
+
+
 ================================================
 Adding Source files "Visual Studio 2022" project
 ================================================
@@ -222,6 +233,7 @@ Adding Source files "Visual Studio 2022" project
 Now, we create our source files and the header files in "Source" Folder, and add the source files to the project
 as existing items, with, "Solution Explorer" -> right ckick "Source Files" -> "Add" -> "Existing Items".
 
-I usually copy the general template provided in the Setup folder of this game engine and paste it in the "Source"
-folder and rename it, "main.cpp", create necessary header files, include them into "main.cpp" and add the "main.cpp"
-to my project. Set "Debug" or "Release" Configuration, "x64" platform, and compile or build ("Build" -> "Build Solution").
+I usually copy the byte_blitz_sfml_general_format.cpp provided in the Setup folder of this game engine and paste
+it in the "Source" folder and rename it, "main.cpp", create necessary header files, include them into "main.cpp"
+and add the "main.cpp" to my project. Set "Debug" or "Release" Configuration, "x64" platform, and compile or build
+("Build" -> "Build Solution").

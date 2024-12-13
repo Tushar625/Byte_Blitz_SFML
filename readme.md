@@ -1,12 +1,12 @@
 ## Byte_Blitz_SFML
 
-This is a very simple game engine based on SFML. It's still in early development phase. The manual for this game engine is not ready yet but every header file is well commented and contains a good description of its components and how to use them.
+This is a very simple game engine based on **SFML 2.6.2**. It's still in early development phase. The manual for this game engine is not ready yet but every header file is well commented and contains a good description about its components and their usage.
 
 Till now I have only used it on windows with Visual Studio 2022.
 
 To know more about how to set it up with Visual Studio 2022, check out **setup_details** folder.
 
-**BBS** folder contains the main code base and **doc** folder has some documentations but that part is not yet finished.
+**BBS** folder contains the main code base and **doc** folder has some documentation but it's not finished yet.
 
 ## Main features:
 
@@ -23,7 +23,7 @@ To know more about how to set it up with Visual Studio 2022, check out **setup_d
 
 ***
 
-I shall create a proper manual discussing more about it in future...
+I shall create a proper manual discussing more about these features in future...
 
 ## Examples
 
