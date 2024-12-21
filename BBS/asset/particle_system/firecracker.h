@@ -123,36 +123,19 @@ public:
 
 	void update(double dt)
 	{
-		for (int i = 0; i < m_particles.size(); i++)
+		for (unsigned i = 0; i < m_particles.size();)
 		{
-			// calculating accn according to velocity to simulate drag
-
-			sf::Vector2f accn; 
-			
-			sf::Vector2f &velocity = m_velocity[i];
-
-			sf::Vertex& particle = m_particles[i];
-
-			// calculating accn from velocity to simulate drag
-
-			accn.x = -25 * velocity.x;
-
-			accn.y = -25 * velocity.y;
-
-			velocity.x += static_cast<float>(accn.x * dt);
-
-			velocity.y += static_cast<float>(accn.y * dt + 200 * dt);	// adding downward accn to simulate gravity
-
-			particle.position.x += static_cast<float>(velocity.x * dt);
-
-			particle.position.y += static_cast<float>(velocity.y * dt);
-
 			// calculating next possible value of alpha of ith particle
 
 			m_Alpha[i] -= m_dAlpha[i] * dt;
 
 			if(m_Alpha[i] <= 0)
 			{
+				/*
+					if alpha of a point <= 0 the point is not visible so we "delete" it by,
+					replacing the point with last point and then deleting the last point
+				*/
+			
 				auto endIndex = m_particles.size() - 1;
 
 				m_particles[i] = m_particles[endIndex];
@@ -170,11 +153,39 @@ public:
 				m_Alpha.pop_back();
 				
 				m_velocity.pop_back();
+
+				// now go to the top of this iteration to update this new particle's alpha
+
+				// if the deleted particle was the last particle the loop condition will stop the loop
+
+				continue;
 			}
-			else
-			{
-				particle.color.a = static_cast<uint8_t>(m_Alpha[i]);
-			}
+
+			sf::Vector2f accn; 
+			
+			sf::Vector2f& velocity = m_velocity[i];
+
+			sf::Vertex& particle = m_particles[i];
+
+			// updating alpha of ith particle
+
+			particle.color.a = static_cast<uint8_t>(m_Alpha[i]);
+
+			// calculating accn from velocity to simulate drag
+
+			accn.x = -25 * velocity.x;
+
+			accn.y = -25 * velocity.y;
+
+			velocity.x += static_cast<float>(accn.x * dt);
+
+			velocity.y += static_cast<float>(accn.y * dt + 200 * dt);	// adding downward accn to simulate gravity
+
+			particle.position.x += static_cast<float>(velocity.x * dt);
+
+			particle.position.y += static_cast<float>(velocity.y * dt);
+
+			i++;
 		}
 	}
 
