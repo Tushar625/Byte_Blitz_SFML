@@ -59,6 +59,11 @@ public:
 		return (sizeof(sf::Vertex) * m_particles.capacity() + sizeof(double) * m_Alpha.capacity() + sizeof(double) * m_dAlpha.capacity() + sizeof(sf::Vector2f) * m_velocity.capacity());
 	}
 
+	size_t sizeInBytes()
+	{
+		return (sizeof(sf::Vertex) * m_particles.size() + sizeof(double) * m_Alpha.size() + sizeof(double) * m_dAlpha.size() + sizeof(sf::Vector2f) * m_velocity.size());
+	}
+
 	/*
 		create a new firecracker effect at a new source point
 
@@ -118,20 +123,8 @@ public:
 
 	void update(double dt)
 	{
-		if (m_particles.size() <= 0)
-		{
-			return;
-		}
-
-		bool flag = true;
-
 		for (int i = 0; i < m_particles.size(); i++)
 		{
-			if(m_Alpha[i] < 0)
-			{
-				continue;	// particle has vanished already
-			}
-
 			// calculating accn according to velocity to simulate drag
 
 			sf::Vector2f accn; 
@@ -154,20 +147,34 @@ public:
 
 			particle.position.y += static_cast<float>(velocity.y * dt);
 
-			// calculating next possible value of alpha
+			// calculating next possible value of alpha of ith particle
 
 			m_Alpha[i] -= m_dAlpha[i] * dt;
 
-			particle.color.a = (m_Alpha[i] <= 0) ? 0 : (flag = false, static_cast<uint8_t>(m_Alpha[i]));
+			if(m_Alpha[i] <= 0)
+			{
+				auto endIndex = m_particles.size() - 1;
 
-			// when all the alpha becomes 0 or less than 0 the flag never set to false and the memeory is deallocated
-		}
+				m_particles[i] = m_particles[endIndex];
 
-		if (flag)
-		{
-			// every one has alpha 0
+				m_dAlpha[i] = m_dAlpha[endIndex];
 
-			clear();
+				m_Alpha[i] = m_Alpha[endIndex];
+
+				m_velocity[i] = m_velocity[endIndex];
+
+				m_particles.pop_back();
+
+				m_dAlpha.pop_back();
+				
+				m_Alpha.pop_back();
+				
+				m_velocity.pop_back();
+			}
+			else
+			{
+				particle.color.a = static_cast<uint8_t>(m_Alpha[i]);
+			}
 		}
 	}
 
