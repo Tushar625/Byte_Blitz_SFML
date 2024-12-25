@@ -1,8 +1,8 @@
 #pragma once
 
 #include<SFML/Graphics.hpp>
-
-#include<vector>
+#include<iostream>
+#include"../../entity_component_system/entity_component_system.h"
 
 
 /*
@@ -38,30 +38,34 @@ public:
 
 	void clear()
 	{
-		m_particles.clear();
-
-		m_dAlpha.clear();
-
-		m_Alpha.clear();
-
-		m_velocity.clear();
+		m_ecs.clear();
 	}
 
 	bool empty()
 	{
-		return m_particles.empty() && m_Alpha.empty() && m_dAlpha.empty() && m_velocity.empty();
+		return m_ecs.empty();
 	}
 
 	// total size reserved in bytes
 
 	size_t capacityInBytes()
 	{
-		return (sizeof(sf::Vertex) * m_particles.capacity() + sizeof(double) * m_Alpha.capacity() + sizeof(double) * m_dAlpha.capacity() + sizeof(sf::Vector2f) * m_velocity.capacity());
+		return (
+			sizeof(t_vertex) * m_ecs.component<t_vertex>().capacity() +
+			sizeof(t_alpha) * m_ecs.component<t_alpha>().capacity() +
+			sizeof(t_dalpha) * m_ecs.component<t_dalpha>().capacity() +
+			sizeof(t_velocity) * m_ecs.component<t_velocity>().capacity()
+		);
 	}
 
 	size_t sizeInBytes()
 	{
-		return (sizeof(sf::Vertex) * m_particles.size() + sizeof(double) * m_Alpha.size() + sizeof(double) * m_dAlpha.size() + sizeof(sf::Vector2f) * m_velocity.size());
+		return (
+			sizeof(t_vertex) * m_ecs.component<t_vertex>().size() +
+			sizeof(t_alpha) * m_ecs.component<t_alpha>().size() +
+			sizeof(t_dalpha) * m_ecs.component<t_dalpha>().size() +
+			sizeof(t_velocity) * m_ecs.component<t_velocity>().size()
+		);
 	}
 
 	/*
@@ -75,13 +79,7 @@ public:
 	{
 		// reserve space for new particles
 
-		m_particles.reserve(m_particles.size() + count);
-
-		m_Alpha.reserve(m_Alpha.size() + count);
-		
-		m_dAlpha.reserve(m_dAlpha.size() + count);
-
-		m_velocity.reserve(m_velocity.size() + count);
+		m_ecs.reserve_extra(count);
 
 		// span represents the diameter so we half it to represent the radius
 
@@ -89,7 +87,9 @@ public:
 
 		for (int i = 0; i < count; i++)
 		{
-			m_Alpha.push_back(255);	// initial alpha of each particle
+			auto particle = m_ecs.create_entity();
+
+			particle.get<t_alpha>() = 255;	// initial alpha of each particle
 
 			/*
 				total alpha is 255.0, so (255.0 / lifeTime) represents the speed of disappearence
@@ -100,7 +100,7 @@ public:
 				lifetime, I found 1000 to give best results so I multiply it
 			*/
 
-			m_dAlpha.push_back(255.0 / lifeTime + (rand() % static_cast<int>(lifeTime * 1000)));
+			particle.get<t_dalpha>() = 255.0 / lifeTime + (rand() % static_cast<int>(lifeTime * 1000));
 
 			double angle = (rand() % 360) * 3.14 / 180;	// 0 -> 359 degrees but in radians
 
@@ -115,44 +115,37 @@ public:
 
 			// getting components of the velocity
 
-			m_velocity.push_back(sf::Vector2f(static_cast<float>(sin(angle) * velo), static_cast<float>(cos(angle) * velo)));
+			particle.get<t_velocity>() = sf::Vector2f(static_cast<float>(sin(angle) * velo), static_cast<float>(cos(angle) * velo));
 
-			m_particles.push_back(sf::Vertex(source, color));
+			particle.get<t_vertex>() = sf::Vertex(source, color);
 		}
 	}
 
 	void update(double dt)
 	{
-		for (unsigned i = 0; i < m_particles.size();)
+		for (size_t i = 0; i < m_ecs.live_entity_count();)
 		{
+			auto& entity = m_ecs.entity(i);
+
+			auto& alpha = entity.get<t_alpha>();
+
 			// calculating next possible value of alpha of ith particle
 
-			m_Alpha[i] -= m_dAlpha[i] * dt;
+			alpha -= entity.get<t_dalpha>() * dt;
 
-			if(m_Alpha[i] <= 0)
+			/*if (i == 0)
+			{
+				std::cout << m_ecs.index_of_compoent<t_vertex>() << ' ' << m_ecs.index_of_compoent< t_alpha > () << ' ' << m_ecs.index_of_compoent<t_dalpha>() << ' ' << m_ecs.index_of_compoent<t_velocity>() << '\n';
+			}*/
+
+			if(alpha <= 0)
 			{
 				/*
 					if alpha of a point <= 0 the point is not visible so we "delete" it by,
 					replacing the point with last point and then deleting the last point
 				*/
 			
-				auto endIndex = m_particles.size() - 1;
-
-				m_particles[i] = m_particles[endIndex];
-
-				m_dAlpha[i] = m_dAlpha[endIndex];
-
-				m_Alpha[i] = m_Alpha[endIndex];
-
-				m_velocity[i] = m_velocity[endIndex];
-
-				m_particles.pop_back();
-
-				m_dAlpha.pop_back();
-				
-				m_Alpha.pop_back();
-				
-				m_velocity.pop_back();
+				m_ecs.kill_entity_packed(entity);
 
 				// now go to the top of this iteration to update this new particle's alpha
 
@@ -163,13 +156,13 @@ public:
 
 			sf::Vector2f accn; 
 			
-			sf::Vector2f& velocity = m_velocity[i];
+			sf::Vector2f& velocity = entity.get<t_velocity>();
 
-			sf::Vertex& particle = m_particles[i];
+			sf::Vertex& particle = entity.get<t_vertex>();
 
 			// updating alpha of ith particle
 
-			particle.color.a = static_cast<uint8_t>(m_Alpha[i]);
+			particle.color.a = static_cast<uint8_t>(alpha);
 
 			// calculating accn from velocity to simulate drag
 
@@ -191,21 +184,26 @@ public:
 
 private:
 
-	void draw(sf::RenderTarget& target, sf::RenderStates states) const
+	void draw(sf::RenderTarget& target, sf::RenderStates states) const override
 	{
 		states.texture = NULL;
 
-		if (m_particles.size() > 0)
+		auto& particles = m_ecs.component<t_vertex>();
+
+		if (m_ecs.live_entity_count() > 0)
 		{
-			target.draw(&m_particles[0], m_particles.size(), sf::Points, states);
+			
+			target.draw(&particles[0], m_ecs.live_entity_count(), sf::Points, states);
 		}
 	}
 
-	std::vector<sf::Vertex> m_particles;
+	using t_vertex = sf::Vertex;
 
-	std::vector<double> m_dAlpha;
+	using t_dalpha = double;
 
-	std::vector<double> m_Alpha;
+	using t_alpha = float;
 
-	std::vector<sf::Vector2f> m_velocity;
+	using t_velocity = sf::Vector2f;
+
+	mutable ENTITY_COMPONENT_SYSTEM<t_vertex, t_dalpha, t_alpha, t_velocity> m_ecs;
 };
