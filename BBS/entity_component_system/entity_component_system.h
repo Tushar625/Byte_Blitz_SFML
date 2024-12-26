@@ -6,6 +6,8 @@
 
 #include<vector>
 
+#include<initializer_list>
+
 // component pool class, each type represents a component
 
 template<typename... component_types>
@@ -25,22 +27,18 @@ class ENTITY_COMPONENT_SYSTEM
 			add multiple components to this entity
 		*/
 
-		template<typename... types>
-
-		void add() noexcept
+		void add(size_t index_of_compoent) noexcept
 		{
-			((ecs.entity_list[id].set(ecs.index_of_compoent<types>())), ...);
+			ecs.entity_list[id].set(index_of_compoent);
 		}
 
 		/*
 			remove multiple components from this entity
 		*/
 
-		template<typename... types>
-
-		void remove() noexcept
+		void remove(size_t index_of_compoent) noexcept
 		{
-			((ecs.entity_list[id].reset(ecs.index_of_compoent<types>())), ...);
+			ecs.entity_list[id].reset(index_of_compoent);
 		}
 
 		/*
@@ -49,20 +47,18 @@ class ENTITY_COMPONENT_SYSTEM
 
 		template<typename type> requires (std::same_as<component_types, type> || ...)
 
-		type& get() noexcept
+		type& get(size_t index_of_compoent) noexcept
 		{
-			return ecs.component<type>()[id];
+			return ecs.component<type>(index_of_compoent)[id];
 		}
 
 		/*
 			does this entity have the given components or not
 		*/
 
-		template<typename... types>
-
-		bool has() const noexcept
+		bool has(size_t index_of_compoent) const noexcept
 		{
-			return (is_alive() && ... && ecs.entity_list[id].test(ecs.index_of_compoent<types>()));
+			return (is_alive() && ecs.entity_list[id].test(index_of_compoent));
 		}
 
 		/*
@@ -113,34 +109,17 @@ class ENTITY_COMPONENT_SYSTEM
 	// constructor creates individual components and component type to component index maps
 
 	ENTITY_COMPONENT_SYSTEM() : temp_entity(*this)
-	{
-		size_t index = 0;
-
-		// mapping component types with indexes of component_list
-
-		(index_of_compoent<component_types>(index++), ...);
-	}
+	{}
 
 	// component functions
-
-	// type -> index of component map
-
-	template<typename type> requires (std::same_as<component_types, type> || ...)
-	
-	size_t index_of_compoent(size_t index = 0) const noexcept
-	{
-		static size_t component_index = index;
-
-		return component_index;
-	}
 
 	// type -> component vector map
 
 	template<typename type> requires (std::same_as<component_types, type> || ...)
 
-	std::vector<type>& component() noexcept
+	std::vector<type>& component(size_t index_of_compoent) noexcept
 	{
-		return *(std::vector<type> *)(&component_list[index_of_compoent<type>()]);
+		return *(std::vector<type> *)(&component_list[index_of_compoent]);
 	}
 
 	// entity functions
@@ -149,9 +128,7 @@ class ENTITY_COMPONENT_SYSTEM
 		add a new entity to the ENTITY_COMPONENT_SYSTEM also specify its components
 	*/
 
-	template<typename... types>
-
-	ENTITY create_entity() noexcept
+	ENTITY create_entity(std::initializer_list<size_t> index_of_compoent = {}) noexcept
 	{
 		if(dead_entity_list.empty())
 		{
@@ -165,7 +142,9 @@ class ENTITY_COMPONENT_SYSTEM
 
 			// need to extend the component vectors
 
-			((component<component_types>().resize(entity_list.size())), ...);
+			size_t index = 0;
+
+			(component<component_types>(index++).resize(entity_list.size()), ...);
 		}
 		else
 		{
@@ -182,13 +161,19 @@ class ENTITY_COMPONENT_SYSTEM
 
 		// adding components to this new entity
 
-		if(sizeof... (types))
+		if(index_of_compoent.size())
 		{
-			temp_entity.add<types...>();
+			for (auto& index : index_of_compoent)
+			{
+				temp_entity.add(index);
+			}
 		}
 		else
 		{
-			temp_entity.add<component_types...>();
+			for (size_t index = 0; index < sizeof... (component_types); index++)
+			{
+				temp_entity.add(index);
+			}
 		}
 
 		return temp_entity;
@@ -247,7 +232,9 @@ class ENTITY_COMPONENT_SYSTEM
 
 			entity_list[entity.id] = entity_list[temp.id];
 
-			((entity.get<component_types>() = temp.get<component_types>()), ...);
+			size_t index = 0;
+
+			((entity.get<component_types>(index++) = temp.get<component_types>(index)), ...);
 
 			// kill the last alive entity
 
@@ -285,7 +272,9 @@ class ENTITY_COMPONENT_SYSTEM
 		
 		entity_list.reserve(required_capacity);
 
-		(component<component_types>().reserve(required_capacity), ...);
+		size_t index = 0;
+		
+		(component<component_types>(index++).reserve(required_capacity), ...);
 	}
 
 	ENTITY& entity(size_t id) noexcept

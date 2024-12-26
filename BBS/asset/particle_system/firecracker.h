@@ -2,7 +2,7 @@
 
 #include<SFML/Graphics.hpp>
 #include<iostream>
-#include"../../entity_component_system/entity_component_system.h"
+#include"../../entity_component_system/entity_component_system_packed.h"
 
 
 /*
@@ -51,20 +51,20 @@ public:
 	size_t capacityInBytes()
 	{
 		return (
-			sizeof(t_vertex) * m_ecs.component<t_vertex>().capacity() +
-			sizeof(t_alpha) * m_ecs.component<t_alpha>().capacity() +
-			sizeof(t_dalpha) * m_ecs.component<t_dalpha>().capacity() +
-			sizeof(t_velocity) * m_ecs.component<t_velocity>().capacity()
+			sizeof(t_vertex) * m_ecs.component<t_vertex>(VERTEX).capacity() +
+			sizeof(t_alpha) * m_ecs.component<t_alpha>(ALPHA).capacity() +
+			sizeof(t_dalpha) * m_ecs.component<t_dalpha>(DALPHA).capacity() +
+			sizeof(t_velocity) * m_ecs.component<t_velocity>(VELOCITY).capacity()
 		);
 	}
 
 	size_t sizeInBytes()
 	{
 		return (
-			sizeof(t_vertex) * m_ecs.component<t_vertex>().size() +
-			sizeof(t_alpha) * m_ecs.component<t_alpha>().size() +
-			sizeof(t_dalpha) * m_ecs.component<t_dalpha>().size() +
-			sizeof(t_velocity) * m_ecs.component<t_velocity>().size()
+			sizeof(t_vertex) * m_ecs.component<t_vertex>(VERTEX).size() +
+			sizeof(t_alpha) * m_ecs.component<t_alpha>(ALPHA).size() +
+			sizeof(t_dalpha) * m_ecs.component<t_dalpha>(DALPHA).size() +
+			sizeof(t_velocity) * m_ecs.component<t_velocity>(VELOCITY).size()
 		);
 	}
 
@@ -89,7 +89,7 @@ public:
 		{
 			auto particle = m_ecs.create_entity();
 
-			particle.get<t_alpha>() = 255;	// initial alpha of each particle
+			particle.get<t_alpha>(ALPHA) = 255;	// initial alpha of each particle
 
 			/*
 				total alpha is 255.0, so (255.0 / lifeTime) represents the speed of disappearence
@@ -100,7 +100,7 @@ public:
 				lifetime, I found 1000 to give best results so I multiply it
 			*/
 
-			particle.get<t_dalpha>() = 255.0 / lifeTime + (rand() % static_cast<int>(lifeTime * 1000));
+			particle.get<t_dalpha>(DALPHA) = 255.0 / lifeTime + (rand() % static_cast<int>(lifeTime * 1000));
 
 			double angle = (rand() % 360) * 3.14 / 180;	// 0 -> 359 degrees but in radians
 
@@ -115,23 +115,23 @@ public:
 
 			// getting components of the velocity
 
-			particle.get<t_velocity>() = sf::Vector2f(static_cast<float>(sin(angle) * velo), static_cast<float>(cos(angle) * velo));
+			particle.get<t_velocity>(VELOCITY) = sf::Vector2f(static_cast<float>(sin(angle) * velo), static_cast<float>(cos(angle) * velo));
 
-			particle.get<t_vertex>() = sf::Vertex(source, color);
+			particle.get<t_vertex>(VERTEX) = sf::Vertex(source, color);
 		}
 	}
 
 	void update(double dt)
 	{
-		for (size_t i = 0; i < m_ecs.live_entity_count();)
+		for (size_t i = 0; i < m_ecs.entity_count();)
 		{
 			auto& entity = m_ecs.entity(i);
 
-			auto& alpha = entity.get<t_alpha>();
+			auto& alpha = entity.get<t_alpha>(ALPHA);
 
 			// calculating next possible value of alpha of ith particle
 
-			alpha -= entity.get<t_dalpha>() * dt;
+			alpha -= entity.get<t_dalpha>(DALPHA) * dt;
 
 			/*if (i == 0)
 			{
@@ -145,7 +145,7 @@ public:
 					replacing the point with last point and then deleting the last point
 				*/
 			
-				m_ecs.kill_entity_packed(entity);
+				m_ecs.kill_entity(entity);
 
 				// now go to the top of this iteration to update this new particle's alpha
 
@@ -156,9 +156,9 @@ public:
 
 			sf::Vector2f accn; 
 			
-			sf::Vector2f& velocity = entity.get<t_velocity>();
+			sf::Vector2f& velocity = entity.get<t_velocity>(VELOCITY);
 
-			sf::Vertex& particle = entity.get<t_vertex>();
+			sf::Vertex& particle = entity.get<t_vertex>(VERTEX);
 
 			// updating alpha of ith particle
 
@@ -188,12 +188,12 @@ private:
 	{
 		states.texture = NULL;
 
-		auto& particles = m_ecs.component<t_vertex>();
+		auto& particles = m_ecs.component<t_vertex>(VERTEX);
 
-		if (m_ecs.live_entity_count() > 0)
+		if (m_ecs.entity_count() > 0)
 		{
 			
-			target.draw(&particles[0], m_ecs.live_entity_count(), sf::Points, states);
+			target.draw(&particles[0], m_ecs.entity_count(), sf::Points, states);
 		}
 	}
 
@@ -205,5 +205,7 @@ private:
 
 	using t_velocity = sf::Vector2f;
 
-	mutable ENTITY_COMPONENT_SYSTEM<t_vertex, t_dalpha, t_alpha, t_velocity> m_ecs;
+	mutable ENTITY_COMPONENT_SYSTEM_PACKED<t_vertex, t_dalpha, t_alpha, t_velocity> m_ecs;
+
+	enum {VERTEX, DALPHA, ALPHA, VELOCITY};
 };
