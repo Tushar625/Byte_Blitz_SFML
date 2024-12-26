@@ -2,7 +2,7 @@
 
 #include<SFML/Graphics.hpp>
 #include<iostream>
-#include"../../entity_component_system/entity_component_system_packed.h"
+#include"../../entity_component_system/entity_component_system.h"
 
 
 /*
@@ -72,7 +72,7 @@ public:
 
 	void create(sf::Vector2f source, sf::Color color = sf::Color::White, int count = 1000, double span = 100, double lifeTime = 1)
 	{
-		ENTITY_COMPONENT_SYSTEM_PACKED<t_vertex, t_dalpha, t_alpha, t_velocity>::ENTITY particle(m_ecs);
+		ENTITY_COMPONENT_SYSTEM<t_vertex, t_dalpha, t_alpha, t_velocity>::ENTITY particle(m_ecs);
 
 		// reserve space for new particles
 
@@ -202,7 +202,7 @@ private:
 
 	using t_velocity = sf::Vector2f;
 
-	mutable ENTITY_COMPONENT_SYSTEM_PACKED<t_vertex, t_dalpha, t_alpha, t_velocity> m_ecs;
+	mutable ENTITY_COMPONENT_SYSTEM<t_vertex, t_dalpha, t_alpha, t_velocity> m_ecs;
 
 	enum {VERTEX, DALPHA, ALPHA, VELOCITY};
 };
