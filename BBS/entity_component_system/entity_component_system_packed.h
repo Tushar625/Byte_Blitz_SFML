@@ -14,6 +14,8 @@ template<typename... component_types>
 
 class ENTITY_COMPONENT_SYSTEM_PACKED
 {
+public:
+
 	struct ENTITY
 	{
 		size_t id;
@@ -67,9 +69,11 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 
 		constexpr bool is_valid() const noexcept
 		{
-			return 0 <= id && id < ecs.entity_count();
+			return 0 <= id && id <= ecs.top;
 		}
 	};
+
+private:
 
 	// array of component vectors
 
@@ -107,32 +111,33 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 		add a new entity to the ENTITY_COMPONENT_SYSTEM also specify its components
 	*/
 
-	constexpr ENTITY create_entity(std::initializer_list<size_t> index_of_compoent = {}) noexcept
+	ENTITY create_entity(std::initializer_list<size_t> index_of_compoent = {}) noexcept
 	{
+		// check for overflow
+
+		if (top >= entity_list.size() - 1)
+		{
+			// overflowing, increase capacity
+
+			reserve_extra(8);
+		}
+
 		// add a new entity mask
 
-		temp_entity.id = entity_list.size();
-
-		entity_list.push_back(0);
-
-		// need to extend the component vectors
-
-		size_t index = 0;
-
-		(component<component_types>(index++).resize(entity_list.size()), ...);
-		
-		// adding components to this new entity
+		temp_entity.id = ++top;
 
 		if(index_of_compoent.size())
 		{
+			entity_list[top] = 0;
+
 			for (auto& index : index_of_compoent)
 			{
-				entity_list[temp_entity.id].set(index);
+				entity_list[top].set(index);
 			}
 		}
 		else
 		{
-			entity_list[temp_entity.id].set();
+			entity_list[top].set();
 		}
 
 		return temp_entity;
@@ -143,7 +148,7 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 		to ensure packed entity list
 	*/
 
-	constexpr void kill_entity(ENTITY &entity) noexcept
+	void kill_entity(ENTITY &entity) noexcept
 	{
 		if(entity.is_valid())
 		{
@@ -151,21 +156,15 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 
 			// this entity will be replaced with the last entity
 
-			auto endindex = entity_list.size() - 1;
-
-			entity_list[entity.id] = entity_list[endindex];
+			entity_list[entity.id] = entity_list[top];
 
 			size_t index = 0;
 
-			((component<component_types>(index++)[entity.id] = component<component_types>(index)[endindex]), ...);
+			((component<component_types>(index++)[entity.id] = component<component_types>(index)[top]), ...);
 
-			// kill the last entity and it's components
+			// decrement top to pop out the last entity
 
-			entity_list.pop_back();
-
-			index = 0;
-
-			(component<component_types>(index++).pop_back(), ...);
+			--top;
 		}
 	}
 
@@ -175,13 +174,22 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 
 	void reserve_extra(size_t extra) noexcept
 	{
-		size_t required_capacity = entity_list.size() + extra;
+		if ((entity_list.size() - entity_count()) >= extra)
+		{
+			// extra entities can be accomodated without allocating more space
+
+			return;
+		}
+
+		// need to allocate some more space
+
+		size_t required_capacity = entity_count() + extra;
 		
-		entity_list.reserve(required_capacity);
+		entity_list.resize(required_capacity);
 
 		size_t index = 0;
 		
-		(component<component_types>(index++).reserve(required_capacity), ...);
+		(component<component_types>(index++).resize(required_capacity), ...);
 	}
 
 	constexpr ENTITY& entity(size_t id) noexcept
@@ -198,7 +206,7 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 
 	constexpr size_t entity_count() const noexcept
 	{
-		return entity_list.size();
+		return top + 1;
 	}
 
 	/*
@@ -207,6 +215,8 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 
 	constexpr void clear() noexcept
 	{
+		top = -1;
+
 		entity_list.clear();
 
 		size_t index = 0;
@@ -216,6 +226,6 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 
 	constexpr bool empty() const noexcept
 	{
-		return entity_list.empty();
+		return top == -1;
 	}
 };

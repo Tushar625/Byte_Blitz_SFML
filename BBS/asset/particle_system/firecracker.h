@@ -60,12 +60,7 @@ public:
 
 	size_t sizeInBytes()
 	{
-		return (
-			sizeof(t_vertex) * m_ecs.component<t_vertex>(VERTEX).size() +
-			sizeof(t_alpha) * m_ecs.component<t_alpha>(ALPHA).size() +
-			sizeof(t_dalpha) * m_ecs.component<t_dalpha>(DALPHA).size() +
-			sizeof(t_velocity) * m_ecs.component<t_velocity>(VELOCITY).size()
-		);
+		return (sizeof(t_vertex) + sizeof(t_alpha) + sizeof(t_dalpha) + sizeof(t_velocity)) * m_ecs.entity_count();
 	}
 
 	/*
@@ -77,6 +72,8 @@ public:
 
 	void create(sf::Vector2f source, sf::Color color = sf::Color::White, int count = 1000, double span = 100, double lifeTime = 1)
 	{
+		ENTITY_COMPONENT_SYSTEM_PACKED<t_vertex, t_dalpha, t_alpha, t_velocity>::ENTITY particle(m_ecs);
+
 		// reserve space for new particles
 
 		m_ecs.reserve_extra(count);
@@ -87,7 +84,7 @@ public:
 
 		for (int i = 0; i < count; i++)
 		{
-			auto particle = m_ecs.create_entity();
+			particle.id = m_ecs.create_entity().id;
 
 			particle.get<t_alpha>(ALPHA) = 255;	// initial alpha of each particle
 
