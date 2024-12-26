@@ -27,7 +27,7 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 			add multiple components to this entity
 		*/
 
-		void add(size_t index_of_compoent) noexcept
+		constexpr void add(size_t index_of_compoent) noexcept
 		{
 			ecs.entity_list[id].set(index_of_compoent);
 		}
@@ -36,7 +36,7 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 			remove multiple components from this entity
 		*/
 
-		void remove(size_t index_of_compoent) noexcept
+		constexpr void remove(size_t index_of_compoent) noexcept
 		{
 			ecs.entity_list[id].reset(index_of_compoent);
 		}
@@ -47,7 +47,7 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 
 		template<typename type> requires (std::same_as<component_types, type> || ...)
 
-		type& get(size_t index_of_compoent) noexcept
+		constexpr type& get(size_t index_of_compoent) noexcept
 		{
 			return ecs.component<type>(index_of_compoent)[id];
 		}
@@ -56,7 +56,7 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 			does this entity have the given components or not
 		*/
 
-		bool has(size_t index_of_compoent) const noexcept
+		constexpr bool has(size_t index_of_compoent) const noexcept
 		{
 			return ecs.entity_list[id].test(index_of_compoent);
 		}
@@ -65,7 +65,7 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 			checks if this entity is valid or not based on it's id
 		*/
 
-		bool is_valid() const noexcept
+		constexpr bool is_valid() const noexcept
 		{
 			return 0 <= id && id < ecs.entity_count();
 		}
@@ -81,11 +81,13 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 
 	ENTITY temp_entity;
 
+	long long top;
+
 	public:
 
 	// constructor creates individual components and component type to component index maps
 
-	ENTITY_COMPONENT_SYSTEM_PACKED() : temp_entity(*this)
+	ENTITY_COMPONENT_SYSTEM_PACKED() : temp_entity(*this), top(-1)
 	{}
 
 	// component functions
@@ -94,7 +96,7 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 
 	template<typename type> requires (std::same_as<component_types, type> || ...)
 
-	std::vector<type>& component(size_t index_of_compoent) noexcept
+	constexpr std::vector<type>& component(size_t index_of_compoent) noexcept
 	{
 		return *(std::vector<type> *)(&component_list[index_of_compoent]);
 	}
@@ -105,7 +107,7 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 		add a new entity to the ENTITY_COMPONENT_SYSTEM also specify its components
 	*/
 
-	ENTITY create_entity(std::initializer_list<size_t> index_of_compoent = {}) noexcept
+	constexpr ENTITY create_entity(std::initializer_list<size_t> index_of_compoent = {}) noexcept
 	{
 		// add a new entity mask
 
@@ -125,15 +127,12 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 		{
 			for (auto& index : index_of_compoent)
 			{
-				temp_entity.add(index);
+				entity_list[temp_entity.id].set(index);
 			}
 		}
 		else
 		{
-			for (size_t index = 0; index < sizeof... (component_types); index++)
-			{
-				temp_entity.add(index);
-			}
+			entity_list[temp_entity.id].set();
 		}
 
 		return temp_entity;
@@ -144,7 +143,7 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 		to ensure packed entity list
 	*/
 
-	void kill_entity(ENTITY &entity) noexcept
+	constexpr void kill_entity(ENTITY &entity) noexcept
 	{
 		if(entity.is_valid())
 		{
@@ -152,11 +151,13 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 
 			// this entity will be replaced with the last entity
 
-			entity_list[entity.id] = entity_list.back();
+			auto endindex = entity_list.size() - 1;
+
+			entity_list[entity.id] = entity_list[endindex];
 
 			size_t index = 0;
 
-			((entity.get<component_types>(index++) = component<component_types>(index).back()), ...);
+			((component<component_types>(index++)[entity.id] = component<component_types>(index)[endindex]), ...);
 
 			// kill the last entity and it's components
 
@@ -183,7 +184,7 @@ class ENTITY_COMPONENT_SYSTEM_PACKED
 		(component<component_types>(index++).reserve(required_capacity), ...);
 	}
 
-	ENTITY& entity(size_t id) noexcept
+	constexpr ENTITY& entity(size_t id) noexcept
 	{
 		temp_entity.id = id;
 
