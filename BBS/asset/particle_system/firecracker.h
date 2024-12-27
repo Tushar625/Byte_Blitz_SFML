@@ -1,7 +1,7 @@
 #pragma once
 
 #include<SFML/Graphics.hpp>
-#include<iostream>
+
 #include"../../entity_component_system/entity_component_system.h"
 
 
@@ -22,7 +22,7 @@
 	internal arrays are used to store the particles, create() creates those
 	arrays and update() autometically clears them once the show is over, you
 	can also clear them with clear() and check if they are empty or not with
-	empty()
+	empty() (this paragraph needs upgrade)
 */
 
 
@@ -129,11 +129,6 @@ public:
 			// calculating next possible value of alpha of ith particle
 
 			alpha -= entity.get<t_dalpha>(DALPHA) * dt;
-
-			/*if (i == 0)
-			{
-				std::cout << m_ecs.index_of_compoent<t_vertex>() << ' ' << m_ecs.index_of_compoent< t_alpha > () << ' ' << m_ecs.index_of_compoent<t_dalpha>() << ' ' << m_ecs.index_of_compoent<t_velocity>() << '\n';
-			}*/
 
 			if(alpha <= 0)
 			{
