@@ -200,7 +200,7 @@
 	
 	create_entity(), component<>() don't check the "Component Ids" and entity() doesn't check "Entity
 	Id" for the sake of performance but kill_entity() does check "Entity Id" and reserve_extra() also
-	varifies its input.
+	varifies its input, because these 2 functions won't be called as frequently as others.
 	
 */
 
