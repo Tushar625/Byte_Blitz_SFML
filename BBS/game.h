@@ -8,7 +8,7 @@
 
 #include"button/button.h" // general purpose button handler
 
-#include"entity_component_system\entity_component_system.h"	// general purpose entity component system
+#include"entity_component_system/entity_component_system.h"	// general purpose entity component system
 
 #include"system/window.h"
 

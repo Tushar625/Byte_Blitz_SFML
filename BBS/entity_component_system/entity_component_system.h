@@ -193,6 +193,15 @@
 	------------------------------------
 
 	ecs.empty();
+
+	------------------
+	~~~~ Caution: ~~~~
+	------------------
+	
+	create_entity(), component<>() don't check the "Component Ids" and entity() doesn't check "Entity
+	Id" for the sake of performance but kill_entity() does check "Entity Id" and reserve_extra() also
+	varifies its input.
+	
 */
 
 
@@ -239,7 +248,8 @@ class ENTITY_COMPONENT_SYSTEM
 		the constructure takes reference to an object of this ECS class and the id of an entity, which is
 		used to access the data corresponding to that entity
 
-		<*> create an entity wrapper object:-
+		Create an Entity Wrapper Object:
+		--------------------------------
 
 		ENTITY_COMPONENT_SYSTEM<component1_type, ... , componentn_type>::ENTITY entity(object of this ECS class, entity_id);
 
@@ -248,29 +258,41 @@ class ENTITY_COMPONENT_SYSTEM
 		
 		entity.id = new_id;
 
-		<*> add components:-
+		Add Components:
+		---------------
 
 		entity.add(component1_id, ... , componentn_id);
 
 		id of component1 would be 0, id of component2 would be 1 and so on.
 
-		<*> remove components:-
+		Remove Components:
+		------------------
 
 		entity.remove(component1_id, ... , componentn_id);
 
-		<*> access a component
+		Access a Component:
+		-------------------
 
 		entity.get<component_type>(component_id);
 
 		returns a reference to a component (corresponding to component_id) of this entity
 
-		<*> check if an entity has given components or not
+		Check If an Entity Has Given Components or Not:
+		-----------------------------------------------
 
 		entity.has(component1_id, ... , componentn_id);
 
-		<*> check if an entity object has valid entity id or not
+		Check If an Entity Object Has Valid Entity Id or Not:
+		-----------------------------------------------------
 
 		entity.valid();
+
+		------------------
+		~~~~ Caution: ~~~~
+		------------------
+		
+		None of these functions check the "Component Ids" and "Entity Ids" (excluding valid())
+		for the sake of performance
 	*/
 
 	struct ENTITY
@@ -460,7 +482,9 @@ class ENTITY_COMPONENT_SYSTEM
 
 	constexpr void kill_entity(ENTITY &entity) noexcept
 	{
-		if(top > -1 && entity.valid())
+		// we don't need to check for top here this valid() function does that
+
+		if(entity.valid())
 		{
 			// killing an entity only if it's valid
 
