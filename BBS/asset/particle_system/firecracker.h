@@ -51,16 +51,16 @@ public:
 	size_t capacityInBytes()
 	{
 		return (
-			sizeof(t_vertex) * m_ecs.component<t_vertex>(VERTEX).capacity() +
-			sizeof(t_alpha) * m_ecs.component<t_alpha>(ALPHA).capacity() +
-			sizeof(t_dalpha) * m_ecs.component<t_dalpha>(DALPHA).capacity() +
-			sizeof(t_velocity) * m_ecs.component<t_velocity>(VELOCITY).capacity()
+			sizeof(sf::Vertex) * m_ecs.component<VERTEX>().capacity() +
+			sizeof(double) * m_ecs.component<ALPHA>().capacity() +
+			sizeof(double) * m_ecs.component<DALPHA>().capacity() +
+			sizeof(sf::Vector2f) * m_ecs.component<VELOCITY>().capacity()
 		);
 	}
 
 	size_t sizeInBytes()
 	{
-		return (sizeof(t_vertex) + sizeof(t_alpha) + sizeof(t_dalpha) + sizeof(t_velocity)) * m_ecs.entity_count();
+		return (sizeof(sf::Vertex) + sizeof(double) + sizeof(double) + sizeof(sf::Vector2f)) * m_ecs.entity_count();
 	}
 
 	/*
@@ -72,8 +72,6 @@ public:
 
 	void create(sf::Vector2f source, sf::Color color = sf::Color::White, int count = 1000, double span = 100, double lifeTime = 1)
 	{
-		ENTITY_COMPONENT_SYSTEM<t_vertex, t_dalpha, t_alpha, t_velocity>::ENTITY particle(m_ecs);
-
 		// reserve space for new particles
 
 		m_ecs.reserve_extra(count);
@@ -84,9 +82,9 @@ public:
 
 		for (int i = 0; i < count; i++)
 		{
-			particle.id = m_ecs.create_entity().id;
+			auto&& particle = m_ecs.create_entity();
 
-			particle.get<t_alpha>(ALPHA) = 255;	// initial alpha of each particle
+			particle.get<ALPHA>() = 255;	// initial alpha of each particle
 
 			/*
 				total alpha is 255.0, so (255.0 / lifeTime) represents the speed of disappearence
@@ -97,7 +95,7 @@ public:
 				lifetime, I found 1000 to give best results so I multiply it
 			*/
 
-			particle.get<t_dalpha>(DALPHA) = 255.0 / lifeTime + (rand() % static_cast<int>(lifeTime * 1000));
+			particle.get<DALPHA>() = 255.0 / lifeTime + (rand() % static_cast<int>(lifeTime * 1000));
 
 			double angle = (rand() % 360) * 3.14 / 180;	// 0 -> 359 degrees but in radians
 
@@ -112,9 +110,9 @@ public:
 
 			// getting components of the velocity
 
-			particle.get<t_velocity>(VELOCITY) = sf::Vector2f(static_cast<float>(sin(angle) * velo), static_cast<float>(cos(angle) * velo));
+			particle.get<VELOCITY>() = sf::Vector2f(static_cast<float>(sin(angle) * velo), static_cast<float>(cos(angle) * velo));
 
-			particle.get<t_vertex>(VERTEX) = sf::Vertex(source, color);
+			particle.get<VERTEX>() = sf::Vertex(source, color);
 		}
 	}
 
@@ -124,11 +122,11 @@ public:
 		{
 			auto& entity = m_ecs.entity(i);
 
-			auto& alpha = entity.get<t_alpha>(ALPHA);
+			auto& alpha = entity.get<ALPHA>();
 
 			// calculating next possible value of alpha of ith particle
 
-			alpha -= entity.get<t_dalpha>(DALPHA) * dt;
+			alpha -= entity.get<DALPHA>() * dt;
 
 			if(alpha <= 0)
 			{
@@ -148,9 +146,9 @@ public:
 
 			sf::Vector2f accn; 
 			
-			sf::Vector2f& velocity = entity.get<t_velocity>(VELOCITY);
+			sf::Vector2f& velocity = entity.get<VELOCITY>();
 
-			sf::Vertex& particle = entity.get<t_vertex>(VERTEX);
+			sf::Vertex& particle = entity.get<VERTEX>();
 
 			// updating alpha of ith particle
 
@@ -180,7 +178,7 @@ private:
 	{
 		states.texture = NULL;
 
-		auto& particles = m_ecs.component<t_vertex>(VERTEX);
+		auto& particles = m_ecs.component<VERTEX>();
 
 		if (m_ecs.entity_count() > 0)
 		{
@@ -189,15 +187,7 @@ private:
 		}
 	}
 
-	using t_vertex = sf::Vertex;
-
-	using t_dalpha = double;
-
-	using t_alpha = float;
-
-	using t_velocity = sf::Vector2f;
-
-	mutable ENTITY_COMPONENT_SYSTEM<t_vertex, t_dalpha, t_alpha, t_velocity> m_ecs;
+	mutable ENTITY_COMPONENT_SYSTEM<sf::Vertex, double, double, sf::Vector2f> m_ecs;
 
 	enum {VERTEX, DALPHA, ALPHA, VELOCITY};
 };

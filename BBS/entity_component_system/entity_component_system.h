@@ -1,6 +1,10 @@
 #pragma once
 
+#include<iostream>
+
 #include<vector>
+
+#include<tuple>
 
 #include<type_traits>
 
@@ -237,6 +241,10 @@ class ENTITY_COMPONENT_SYSTEM
 
 
 
+	using c_type = std::tuple<std::vector<component_types>...>;
+
+
+
 	public:
 
 
@@ -311,9 +319,11 @@ class ENTITY_COMPONENT_SYSTEM
 			add multiple components to this entity
 		*/
 
-		template<typename... types> requires (std::convertible_to<types, size_t> || ...)
+		//template<typename... types> requires (std::convertible_to<types, size_t> || ...)
 
-		constexpr void add(types... index_of_component) noexcept
+		template<uint8_t... index_of_component> requires((0 <= index_of_component && index_of_component < sizeof...(component_types)) && ...)
+
+		constexpr void add(/*types... index_of_component*/) noexcept
 		{
 			ecs.entity_list[id] |= (((ENTITY_BITMASK_TYPE)1 << index_of_component) | ...);
 		}
@@ -323,9 +333,11 @@ class ENTITY_COMPONENT_SYSTEM
 			remove multiple components from this entity
 		*/
 
-		template<typename... types> requires (std::convertible_to<types, size_t> || ...)
+		//template<typename... types> requires (std::convertible_to<types, size_t> || ...)
 
-		constexpr void remove(types... index_of_component) noexcept
+		template<uint8_t... index_of_component> requires((0 <= index_of_component && index_of_component < sizeof...(component_types)) && ...)
+
+		constexpr void remove(/*types... index_of_component*/) noexcept
 		{
 			ecs.entity_list[id] &= ~(((ENTITY_BITMASK_TYPE)1 << index_of_component) | ...);
 		}
@@ -335,11 +347,13 @@ class ENTITY_COMPONENT_SYSTEM
 			get a component of this entity
 		*/
 
-		template<typename type> requires (std::same_as<component_types, type> || ...)
+		// template<typename type> requires (std::same_as<component_types, type> || ...)
 
-		constexpr type& get(size_t index_of_component) noexcept
+		template<uint8_t index_of_component>
+
+		std::tuple_element<index_of_component, c_type>::type::value_type& get() noexcept
 		{
-			return ecs.component<type>(index_of_component)[id];
+			return ecs.component<index_of_component>()[id];
 		}
 
 		
@@ -347,9 +361,10 @@ class ENTITY_COMPONENT_SYSTEM
 			does this entity has the given components or not
 		*/
 
-		template<typename... types> requires (std::convertible_to<types, size_t> || ...)
+		//template<types... index_of_component> requires (std::convertible_to<types, size_t> || ...)
+		template<uint8_t... index_of_component> requires((0 <= index_of_component && index_of_component < sizeof...(component_types)) && ...)
 
-		constexpr bool has(types... index_of_component) const noexcept
+		constexpr bool has() const noexcept
 		{
 			return (ecs.entity_list[id] & (((ENTITY_BITMASK_TYPE)1 << index_of_component) | ...));
 		}
@@ -373,7 +388,9 @@ class ENTITY_COMPONENT_SYSTEM
 	
 	std::vector<ENTITY_BITMASK_TYPE> entity_list;	// array of entity bitmasks
 
-	std::vector<uint8_t> component_list[sizeof... (component_types)];	// array of component vectors
+	c_type component_tuple;
+
+	//std::vector<uint8_t> component_list[sizeof... (component_types)];	// array of component vectors
 
 	ENTITY temp_entity;	// temporary entity object used for internal opperations
 
@@ -406,11 +423,11 @@ class ENTITY_COMPONENT_SYSTEM
 		vector of the specified type and returns a reference to it.
 	*/
 
-	template<typename type> requires (std::same_as<component_types, type> || ...)
+	template<uint8_t index_of_component>
 
-	constexpr std::vector<type>& component(size_t index_of_component) noexcept
+	std::tuple_element<index_of_component, c_type>::type& component()
 	{
-		return *(std::vector<type> *)(&component_list[index_of_component]);
+		return std::get<index_of_component>(component_tuple);
 	}
 
 
@@ -427,9 +444,9 @@ class ENTITY_COMPONENT_SYSTEM
 		!!!! Caution: the "Component Ids" are not checked !!!!
 	*/
 
-	template<typename... types> requires (std::convertible_to<types, size_t> || ...)
+	template<uint8_t... index_of_component> requires((0 <= index_of_component && index_of_component < sizeof...(component_types)) && ...)
 
-	constexpr ENTITY create_entity(types... index_of_component) noexcept
+	constexpr ENTITY create_entity() noexcept
 	{
 		// check for overflow
 
@@ -494,9 +511,7 @@ class ENTITY_COMPONENT_SYSTEM
 
 			// components of this entity will be replaced with the components of last entity
 
-			size_t index = 0;
-
-			((component<component_types>(index++)[entity.id] = component<component_types>(index)[top]), ...);
+			std::apply([&](auto&&... args) {((args[entity.id] = args[top]), ...); }, component_tuple);
 
 			// decrement top to pop out the last entity
 
@@ -529,9 +544,7 @@ class ENTITY_COMPONENT_SYSTEM
 
 		// allocating space for their components
 
-		size_t index = 0;
-		
-		(component<component_types>(index++).resize(required_capacity), ...);
+		std::apply([&](auto&&... args) {((args.resize(required_capacity)), ...); }, component_tuple);
 	}
 
 
@@ -571,9 +584,7 @@ class ENTITY_COMPONENT_SYSTEM
 
 		entity_list.clear();
 
-		size_t index = 0;
-		
-		(component<component_types>(index++).clear(), ...);
+		std::apply([&](auto&&... args) {((args.clear()), ...); }, component_tuple);
 	}
 
 
