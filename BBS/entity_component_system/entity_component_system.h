@@ -33,21 +33,23 @@
 	Let me describe it's inner working
 	**********************************
 
-	Component Arrays:
-	-----------------
+	Component Arrays (Vectors):
+	---------------------------
 
 	Entities in this ECS are represented by IDs, which are simple indices. Each type
 	of component is stored in a seperate array, implemented using std::vector, and an
 	entity ID is used to access its corresponding component. These component arrays
-	are grouped together in a larger array.
+	(vectors) are grouped together in a tuple.
 
-	component_a : [entity 0][entity 1]...[entity n]
-	component_b : [entity 0][entity 1]...[entity n]
-	component_c : [entity 0][entity 1]...[entity n]
+	entity_id  ->  0  1  2 ... n
+
+	component_a : [0][1][2]...[n]
+	component_b : [0][1][2]...[n]
+	component_c : [0][1][2]...[n]
 	...
-	component_z : [entity 0][entity 1]...[entity n]
+	component_z : [0][1][2]...[n]
 
-	component list : [component_a][component_b][component_c]...[component_z]
+	component tuple : (component_a, component_b, component_c, ..., component_z)
 
 	Entity Bitmasks:
 	----------------
@@ -58,7 +60,11 @@
 	index to access these bitmasks, providing a clear mapping between entities and their
 	components.
 
-	example bitmask of an entity, say we hace 5 components,
+	entity_id    ->  0  1  2 ... n
+
+	Bitmask Array : [0][1][2]...[n]
+
+	example, bitmask of an entity, say we have 5 components,
 
 	/^\                     part of this entity?
 	 1   ->   component_a        Yes
@@ -73,8 +79,8 @@
 
 	For managing entities, the system operates as a stack. New entities are added to the
 	top of the stack. When an entity is deleted, it is replaced by the top entity, and
-	the stack size is reduced by one. This keep the components of all the live entities
-	packed in an contiguous array, without any data shifting and give better performance.
+	the stack size is reduced by one. This keeps the components of the live entities packed
+	in an contiguous array, without any data shifting and give better performance.
 
 	example,
 
@@ -111,8 +117,8 @@
 
 	'pos' - a structure with 2 member data x and y
 	
-	Remember, component vectors are stored in an array, Ids are actually indices of that
-	array, they are used to access a particular component vector.
+	Remember, Component vectors are stored in a tuple, Ids are used as indices to
+	access a particular component vector from the tuple.
 
 	You can use enum to add names to these component Ids,
 
@@ -134,10 +140,10 @@
 
 	// adds some of the components to the new entity
 
-	auto entity = ecs.create_entity(comp0, comp2);
+	auto entity = ecs.create_entity<comp0, comp2>();
 
-	create_entity() has two overloads one takes no arguments other is a variadic function,
-	takes ids of the components you want to add
+	create_entity() has two overloads one takes no arguments other is a variadic template
+	function, that takes ids of the components you want to add as template arguments.
 	
 	create_entity() returns an ENTITY object, ENTITY is a wrapper structure for an enity.
 	More on ENTITY later.
@@ -156,9 +162,9 @@
 	Accessing a Component Vector:
 	-----------------------------
 
-	std::vector<pos>& positions = ecs.component<pos>(comp2);
+	std::vector<pos>& positions = ecs.component<comp2>();
 
-	Takes "component type" as template argument and "component id" as a function argument.
+	Takes "component id" as template argument.
 	
 	Returns a reference to the component vector, note that the type of the returned vector
 	reference is "std::vector<component type>".
@@ -202,9 +208,12 @@
 	~~~~ Caution: ~~~~
 	------------------
 	
-	create_entity(), component<>() don't check the "Component Ids" and entity() doesn't check "Entity
-	Id" for the sake of performance but kill_entity() does check "Entity Id" and reserve_extra() also
-	varifies its input, because these 2 functions won't be called as frequently as others.
+	entity() doesn't check "Entity Id" for the sake of performance,
+
+	But kill_entity() checks "Entity Id" and reserve_extra() varifies its input, because these 2 functions
+	won't be called as frequently as others.
+
+	create_entity(), component<>() check the "Component Ids", given as template arguments, in compile time.
 	
 */
 
@@ -218,7 +227,7 @@ class ENTITY_COMPONENT_SYSTEM
 
 	/*
 		the bitmasks can be 8 to 64 bits long depending on the size of ENTITY_BITMASK_TYPE
-		so we can have maximum 8 to 64 components
+		so, no. of components must be <= sizeof(ENTITY_BITMASK_TYPE)
 	*/
 
 	static_assert(
@@ -241,7 +250,7 @@ class ENTITY_COMPONENT_SYSTEM
 
 
 
-	using c_type = std::tuple<std::vector<component_types>...>;
+	using c_type = std::tuple<std::vector<component_types>...>;	// tuple type to store the components
 
 
 
@@ -250,45 +259,86 @@ class ENTITY_COMPONENT_SYSTEM
 
 
 	/*
-		this structure provides a wrapper for each entity, i.e., this structure can be used to represent
+		This structure provides a wrapper for each entity, i.e., this structure can be used to represent
 		an entity in this ECS
 
-		the constructure takes reference to an object of this ECS class and the id of an entity, which is
+		The constructure takes reference to an object of this ECS class and the id of an entity, which is
 		used to access the data corresponding to that entity
+
+		********************************
+		How to use this ENTITY structure
+		********************************
+
+		Explained with an example,
+
+		Let, this is the ECS object,
+
+		ENTITY_COMPONENT_SYSTEM<int, float, pos, int> ecs;
+		
+		As we can see, our ECS object has 4 components,
+
+		/----------\
+		|Components|
+		+----------+
+		|Type  | Id|
+		+----------+
+		|int   | 0 |
+		|float | 1 |
+		|pos   | 2 |
+		|int   | 3 |
+		\----------/
+
+		'pos' - a structure with 2 member data x and y
+
+		In ECS object Component vectors are stored in a tuple, Ids are used as indices to access a particular
+		component vector from the tuple
+
+		You can use enum to add names to these component Ids,
+
+		enum components{comp0, comp1, comp2, comp3};
 
 		Create an Entity Wrapper Object:
 		--------------------------------
-
-		ENTITY_COMPONENT_SYSTEM<component1_type, ... , componentn_type>::ENTITY entity(object of this ECS class, entity_id);
+		
+		ENTITY_COMPONENT_SYSTEM<int, float, pos, int>::ENTITY entity(ecs, 0);	// entity_id is 0
 
 		ectity_id is optional, its default value is 0, you can update it later to access different entities
 		like,
 		
 		entity.id = new_id;
 
+		Note:
+		
+		Usually, I don't use this big structure name to create an Entity object, just use the entity()
+		method of ECS object, as shown below,
+
+		auto& entity = ecs.entity(0);
+
+		[entity(entity_id) returns a reference to an ENTITY object, whose "id" is set to entity_id]
+
 		Add Components:
 		---------------
 
-		entity.add(component1_id, ... , componentn_id);
+		entity.add<comp0, comp1, comp3>();
 
-		id of component1 would be 0, id of component2 would be 1 and so on.
+		Note that, this and the following methods, accepts the Component Ids as template arguments.
 
 		Remove Components:
 		------------------
 
-		entity.remove(component1_id, ... , componentn_id);
+		entity.remove<comp0, comp3>();
 
 		Access a Component:
 		-------------------
 
-		entity.get<component_type>(component_id);
+		entity.get<comp0>();
 
-		returns a reference to a component (corresponding to component_id) of this entity
+		returns a reference to the component with Id == comp0 of this entity
 
 		Check If an Entity Has Given Components or Not:
 		-----------------------------------------------
 
-		entity.has(component1_id, ... , componentn_id);
+		entity.has<comp0, comp3>();
 
 		Check If an Entity Object Has Valid Entity Id or Not:
 		-----------------------------------------------------
@@ -299,8 +349,9 @@ class ENTITY_COMPONENT_SYSTEM
 		~~~~ Caution: ~~~~
 		------------------
 		
-		None of these functions check the "Component Ids" and "Entity Ids" (excluding valid())
-		for the sake of performance
+		None of these functions check the "Entity Ids" (excluding valid()) for the sake of performance.
+
+		But "Component Ids", given as template arguments, are checked in compile time.
 	*/
 
 	struct ENTITY
@@ -319,11 +370,11 @@ class ENTITY_COMPONENT_SYSTEM
 			add multiple components to this entity
 		*/
 
-		//template<typename... types> requires (std::convertible_to<types, size_t> || ...)
+		template<uint8_t... index_of_component> requires(
+			(0 <= index_of_component && index_of_component < sizeof...(component_types)) && ...
+		)
 
-		template<uint8_t... index_of_component> requires((0 <= index_of_component && index_of_component < sizeof...(component_types)) && ...)
-
-		constexpr void add(/*types... index_of_component*/) noexcept
+		constexpr void add() noexcept
 		{
 			ecs.entity_list[id] |= (((ENTITY_BITMASK_TYPE)1 << index_of_component) | ...);
 		}
@@ -333,11 +384,11 @@ class ENTITY_COMPONENT_SYSTEM
 			remove multiple components from this entity
 		*/
 
-		//template<typename... types> requires (std::convertible_to<types, size_t> || ...)
+		template<uint8_t... index_of_component> requires(
+			(0 <= index_of_component && index_of_component < sizeof...(component_types)) && ...
+		)
 
-		template<uint8_t... index_of_component> requires((0 <= index_of_component && index_of_component < sizeof...(component_types)) && ...)
-
-		constexpr void remove(/*types... index_of_component*/) noexcept
+		constexpr void remove() noexcept
 		{
 			ecs.entity_list[id] &= ~(((ENTITY_BITMASK_TYPE)1 << index_of_component) | ...);
 		}
@@ -347,11 +398,9 @@ class ENTITY_COMPONENT_SYSTEM
 			get a component of this entity
 		*/
 
-		// template<typename type> requires (std::same_as<component_types, type> || ...)
-
 		template<uint8_t index_of_component>
 
-		std::tuple_element<index_of_component, c_type>::type::value_type& get() noexcept
+		constexpr std::tuple_element<index_of_component, c_type>::type::value_type& get() noexcept
 		{
 			return ecs.component<index_of_component>()[id];
 		}
@@ -361,8 +410,9 @@ class ENTITY_COMPONENT_SYSTEM
 			does this entity has the given components or not
 		*/
 
-		//template<types... index_of_component> requires (std::convertible_to<types, size_t> || ...)
-		template<uint8_t... index_of_component> requires((0 <= index_of_component && index_of_component < sizeof...(component_types)) && ...)
+		template<uint8_t... index_of_component> requires(
+			(0 <= index_of_component && index_of_component < sizeof...(component_types)) && ...
+		)
 
 		constexpr bool has() const noexcept
 		{
@@ -388,9 +438,7 @@ class ENTITY_COMPONENT_SYSTEM
 	
 	std::vector<ENTITY_BITMASK_TYPE> entity_list;	// array of entity bitmasks
 
-	c_type component_tuple;
-
-	//std::vector<uint8_t> component_list[sizeof... (component_types)];	// array of component vectors
+	c_type component_tuple;	// stores all the component vectors
 
 	ENTITY temp_entity;	// temporary entity object used for internal opperations
 
@@ -412,20 +460,20 @@ class ENTITY_COMPONENT_SYSTEM
 
 
 	/*
-		This function returns a reference to the component vector corresponding to the specified index (index_of_component).
-		To use this function, you must provide the type of the component as a template argument.
+		This function returns a reference to the component vector corresponding to the specified "component id".
+		This function takes the "component id" as a template argument.
 
 		Component vectors are indexed based on the order of their types in the template arguments when
 		the ECS object is declared. By convention, indexing starts at 0 and follows the sequence of
 		types provided.
 
-		Internally, components are stored as std::vector<uint8_t>. This function casts this vector to a
-		vector of the specified type and returns a reference to it.
+		Internally, components are stored as std::tuple. This function simply accesses an element of this tuple
+		using "component id" as index and returns a reference to it.
 	*/
 
 	template<uint8_t index_of_component>
 
-	std::tuple_element<index_of_component, c_type>::type& component()
+	constexpr std::tuple_element<index_of_component, c_type>::type& component()
 	{
 		return std::get<index_of_component>(component_tuple);
 	}
@@ -439,12 +487,12 @@ class ENTITY_COMPONENT_SYSTEM
 	/*
 		adds a new entity to the ECS and returns it as an entity object
 		
-		lets you specify the ids of the components to be added to this entity
-
-		!!!! Caution: the "Component Ids" are not checked !!!!
+		lets you specify the ids of the components to be added to this entity as template arguments
 	*/
 
-	template<uint8_t... index_of_component> requires((0 <= index_of_component && index_of_component < sizeof...(component_types)) && ...)
+	template<uint8_t... index_of_component> requires(
+		(0 <= index_of_component && index_of_component < sizeof...(component_types)) && ...
+	)
 
 	constexpr ENTITY create_entity() noexcept
 	{
