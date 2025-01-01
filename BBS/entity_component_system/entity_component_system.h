@@ -7,6 +7,18 @@
 #include<type_traits>
 
 
+namespace bb
+{
+	template<typename ENTITY_BITMASK_TYPE, uint16_t RESERVE_EXTRA_ENTITIES, typename... component_types>
+
+	class ENTITY_COMPONENT_SYSTEM;
+
+	template<typename... component_types>
+
+	struct ECS;
+}
+
+
 
 /*
 	This is a simple ECS (Entity Component System) implementation.
@@ -219,7 +231,7 @@
 
 template<typename ENTITY_BITMASK_TYPE, uint16_t RESERVE_EXTRA_ENTITIES, typename... component_types>
 
-class ENTITY_COMPONENT_SYSTEM
+class bb::ENTITY_COMPONENT_SYSTEM
 {
 
 
@@ -662,7 +674,7 @@ class ENTITY_COMPONENT_SYSTEM
 
 template<typename... component_types>
 
-struct ECS
+struct bb::ECS
 {
 	/*
 		uint8_t is 8 bits long and allows for 8 components max, same goes for the others

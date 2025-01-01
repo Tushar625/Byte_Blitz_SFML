@@ -187,7 +187,7 @@ private:
 		}
 	}
 
-	mutable ECS<sf::Vertex, double, double, sf::Vector2f>::C8 m_ecs;
+	mutable bb::ECS<sf::Vertex, double, double, sf::Vector2f>::C8 m_ecs;
 
 	enum {VERTEX, DALPHA, ALPHA, VELOCITY};
 };
