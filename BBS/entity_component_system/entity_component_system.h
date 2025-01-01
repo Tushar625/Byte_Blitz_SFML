@@ -1,28 +1,10 @@
 #pragma once
 
-#include<iostream>
-
 #include<vector>
 
 #include<tuple>
 
 #include<type_traits>
-
-
-
-/*
-	here we use uint8_t which is 8 bits long and allows for 8 components only, if
-	you need to have more components use uint16_t, uint32_t, uint64_t. Only unsigned
-	integral types are allowed.
-*/
-
-#ifndef ENTITY_BITMASK_TYPE
-#define ENTITY_BITMASK_TYPE uint8_t
-#endif
-
-#ifndef RESERVE_EXTRA_ENTITIES
-#define RESERVE_EXTRA_ENTITIES 10
-#endif
 
 
 
@@ -127,9 +109,27 @@
 	Creating ECS Object:
 	--------------------
 
-	ENTITY_COMPONENT_SYSTEM<int, float, pos, int> ecs;
+	ENTITY_COMPONENT_SYSTEM<uint8_t, 100, int, float, pos, int> ecs;
+
+	uint8_t is the type of entity bitmask, no. of bits in entity bitmask = maximum no.
+	of components.
+
+	100 is the "RESERVE_EXTRA_ENTITIES", if create_entity() runs out of space, it extends
+	internal vectors by "RESERVE_EXTRA_ENTITIES" to store new entities.
+
+	Rest of the arguments specify component types.
 
 	The order of the component types is important, as it determines the component ids.
+
+	To reduce your effort, I provide a structure that only takes the component types, use
+	it as follows,
+
+	ECS<int, float, pos, int>::C8 ecs;
+
+	C8 is a type defined in ECS structure that sets ENTITY_BITMASK_TYPE as uint8_t, similarly,
+	to make it uint16_t, uint32_t, uint64_t use C16, C32, C64 respectively.
+
+	By default RESERVE_EXTRA_ENTITIES is set to 100 inside ECS class.
 
 	Adding an Entity:
 	-----------------
@@ -217,9 +217,7 @@
 	
 */
 
-
-
-template<typename... component_types>
+template<typename ENTITY_BITMASK_TYPE, uint16_t RESERVE_EXTRA_ENTITIES, typename... component_types>
 
 class ENTITY_COMPONENT_SYSTEM
 {
@@ -273,7 +271,7 @@ class ENTITY_COMPONENT_SYSTEM
 
 		Let, this is the ECS object,
 
-		ENTITY_COMPONENT_SYSTEM<int, float, pos, int> ecs;
+		ECS<int, float, pos, int>::C8 ecs;
 		
 		As we can see, our ECS object has 4 components,
 
@@ -642,4 +640,39 @@ class ENTITY_COMPONENT_SYSTEM
 	{
 		return top == -1;
 	}
+};
+
+
+
+/*
+	this is wrapper type to make it easier to use ENTITY_COMPONENT_SYSTEM<>
+	it provides the first two template arguments
+
+	ECS<int, double, float>::C8 ecs;
+
+	        max component
+	C8  =>    8
+	C16 =>    16
+	C32 =>    32
+	C64 =>    64
+
+	If you want to change "RESERVE_EXTRA_ENTITIES", unfortunately you have to
+	use ENTITY_COMPONENT_SYSTEM<> template
+*/
+
+template<typename... component_types>
+
+struct ECS
+{
+	/*
+		uint8_t is 8 bits long and allows for 8 components max, same goes for the others
+	*/
+
+	using C8 = ENTITY_COMPONENT_SYSTEM<uint8_t, 100, component_types...>;
+
+	using C16 = ENTITY_COMPONENT_SYSTEM<uint16_t, 100, component_types...>;
+
+	using C32 = ENTITY_COMPONENT_SYSTEM<uint32_t, 100, component_types...>;
+
+	using C64 = ENTITY_COMPONENT_SYSTEM<uint64_t, 100, component_types...>;
 };

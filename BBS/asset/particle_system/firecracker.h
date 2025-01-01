@@ -187,7 +187,7 @@ private:
 		}
 	}
 
-	mutable ENTITY_COMPONENT_SYSTEM<sf::Vertex, double, double, sf::Vector2f> m_ecs;
+	mutable ECS<sf::Vertex, double, double, sf::Vector2f>::C8 m_ecs;
 
 	enum {VERTEX, DALPHA, ALPHA, VELOCITY};
 };
