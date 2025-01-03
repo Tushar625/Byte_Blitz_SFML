@@ -2,6 +2,32 @@
 #pragma once
 
 
+#ifdef MSVC_DETECT_MEMORY_LEAK
+
+/*
+	Microsoft Visual C++ debug library comes with memory leak detector
+	so if you are using visual studio, you can enable it with this macro.
+
+	The following code and the first line of main() activates the memory
+	leak detector
+
+	I learned about this from Professional C++ 5th ed
+*/
+
+#define _CRTDBG_MAP_ALLOC
+#include <cstdlib>
+#include <crtdbg.h>
+
+#ifdef _DEBUG
+#ifndef DBG_NEW
+#define DBG_NEW new ( _NORMAL_BLOCK , __FILE__ , __LINE__ )
+#define new DBG_NEW
+#endif
+#endif  // _DEBUG
+
+#endif
+
+
 #include"game_loop/game_loop.h"	// general purpose game loop
 
 #include"state_machine/state_machine.h"	// general purpose game state machine
@@ -244,6 +270,10 @@ class bb::Game : public bb::GAME_LOOP
 
 int main(int arg_count, char *arg[])
 {
+	#ifdef MSVC_DETECT_MEMORY_LEAK
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	#endif
+
 	bb::arg_count = arg_count;
 
 	bb::arg = arg;
