@@ -196,6 +196,16 @@ namespace bb
 
 	};
 
+	****** Note:
+
+	There is a little problem, currently I suggest to use change_to() function to change
+	states, and if any state want to stop the game loop it returns a value through Update()
+	which is read by Update of game loop and the game loop stops. If you stop the game loop
+	this way, the Exit() function of the last state is not called. This can become a significant
+	issue if we use this system to implement a state machine that is local to another state.
+	Then the Exit() of that inner state machine will never be executed unless we manually
+	execute it, which is not very programmer friendly.
+
 	==================================================================================
 
 	Transferring data between states:
