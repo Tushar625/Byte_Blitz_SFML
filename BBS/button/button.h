@@ -552,10 +552,9 @@ public:
 		to render the buttons and selector on the screen
 	*/
 
-	void Render(void (*render_button_selector) (BUTTON_LIST &) = nullptr)
+	void Render(void (*render_button_selector) (BUTTON_LIST &))
 	{
-		if(render_button_selector)
-			render_button_selector(*this);	// to render the menu selector
+		render_button_selector(*this);	// to render the menu selector
 
 		// rendering the buttons
 
