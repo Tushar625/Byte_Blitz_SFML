@@ -3,6 +3,7 @@
 #include"../utility/pos_fun.h"
 #include<vector>
 #include<utility>
+#include<concepts>
 
 
 namespace bb
@@ -550,9 +551,15 @@ public:
 
 	/*
 		to render the buttons and selector on the screen
+
+		it takes a function pointer with return type "void" and one input parameter
+		of type "BUTTON_LIST &"
+
+		here we check the type of input parameter at compile time, it also prevents
+		users from sending nullptr as argument, without any runtime overhead
 	*/
 
-	void Render(void (*render_button_selector) (BUTTON_LIST &))
+	void Render(std::same_as<void (*) (BUTTON_LIST &)> auto const render_button_selector)
 	{
 		render_button_selector(*this);	// to render the menu selector
 
