@@ -1,11 +1,11 @@
 #pragma once
 
-#include<limits>
-
 
 namespace bb
 {
 	class BASE_STATE;
+
+	extern class BASE_STATE NULL_STATE;
 
 	class STATE_MACHINE;
 }
@@ -308,17 +308,15 @@ class bb::BASE_STATE
 	virtual void Enter()
 	{}
 
-	virtual int Update(double dt)
-	{
-		return std::numeric_limits<int>::min();
-	}
+	virtual void Update(double dt)
+	{}
 
 	virtual void Render()
 	{}
 
 	virtual void Exit()
 	{}
-};
+} bb::NULL_STATE;
 
 
 /*
@@ -337,7 +335,7 @@ class bb::STATE_MACHINE
 
 	public:
 
-	STATE_MACHINE() : current_state(nullptr) // no current state is set initially
+	STATE_MACHINE() : current_state(&NULL_STATE) // no current state is set initially
 	{}
 
 
@@ -350,12 +348,30 @@ class bb::STATE_MACHINE
 	
 	void change_to(STATE_TYPE& next_state)
 	{
-		if(current_state)
-			current_state->Exit();  // exit from current state
+		current_state->Exit();  // exit from current state
 
 		current_state = &next_state;	// store address of this state
 
 		current_state->Enter(); // enter new state
+	}
+
+	template<typename STATE_TYPE, typename ...type>
+
+	void change_to(STATE_TYPE& next_state, type ...args)
+	{
+		current_state->Exit();  // exit from current state
+
+		next_state.init(args...);
+
+		current_state = &next_state;	// store address of this state
+
+		current_state->Enter(); // enter new state
+	}
+
+
+	bool null_state() const noexcept
+	{
+		return current_state == &NULL_STATE;
 	}
 
 
@@ -366,14 +382,9 @@ class bb::STATE_MACHINE
 		the Update() of game loop
 	*/
 
-	int Update(double dt)
+	void Update(double dt)
 	{
-		if(current_state)
-		{
-			return current_state->Update(dt);
-		}
-
-		return std::numeric_limits<int>::min();
+		current_state->Update(dt);
 	}
 
 
@@ -383,7 +394,6 @@ class bb::STATE_MACHINE
 
 	void Render()
 	{
-		if(current_state)
-			current_state->Render();
+		current_state->Render();
 	}
 };
