@@ -242,7 +242,7 @@ namespace bb
 
 		...
 
-		int Update(double dt)
+		void Update(double dt)
 		{
 			...
 			// change state: 'initial' -> 'play' and sending data to play state
