@@ -15,24 +15,14 @@ class bb::Exhaust : public sf::Drawable
 {
 public:
 
-	void clear()
-	{
-		m_ecs.clear();
-	}
-
-	bool empty()
-	{
-		return m_ecs.empty();
-	}
-
 	/*
-		create a new firecracker effect at a new source point
+		spray <= "m_sprayAmount" no. of particles, call this function repeatedly
+		to get a consistent spray of particles
 
-		create simply increases size of internal arrays to fit more vertices
-		when all the particles disappear all the arrays are cleared
+		if also recycles the deleted particles
 	*/
 
-	void spray()
+	void spray() noexcept
 	{
 		for (int i = 0; i < m_sprayAmount && m_ecs.entity_count() < m_count; i++)
 		{
@@ -72,7 +62,7 @@ public:
 
 			int velo = rand() % m_maxVelocity;
 
-			// getting components of the velocity
+			// getting components of the velocity according to "angle"
 
 			particle.get<VELOCITY>() = sf::Vector2f(trigo.x * velo, trigo.y * velo);
 
@@ -130,31 +120,123 @@ public:
 
 	// consructor
 
-	Exhaust() :
-		m_source{ 100, 100 },
-		m_direction(0),
-		m_angle(20),
+	Exhaust(uint32_t count = DEFAULT_COUNT) :
+		m_source{ 0, 0 },
+		m_direction(DEFAULT_DIRECTION),
+		m_angle(DEFAULT_ANGLE),
 
 		m_color{ sf::Color::White },
-		m_count(10000),
-		m_sprayAmount(100),
-		m_span(50),
-		m_gap(0),
-		m_maxVelocity(100)
+		m_count(count),
+		m_sprayAmount(DEFAULT_SPRAY_AMOUNT),
+		m_span(DEFAULT_SPAN),
+		m_gap(DEFAULT_GAP),
+		m_maxVelocity(DEFAULT_MAX_VELOCITY)
 	{
+		// reserve space for all the particles
+
 		m_ecs.reserve_extra(m_count);
 	}
 
-	// getters and setters
+	/*
+		getters and setters:
+
+		use them to customize the exhaust animation
+	*/
+
+	// source
 
 	sf::Vector2f getSource() const noexcept
 	{
 		return m_source;
 	}
 
-	void setSource(const sf::Vector2f &pt) noexcept
+	void setSource(const sf::Vector2f &pt = {0, 0}) noexcept
 	{
 		m_source = pt;
+	}
+
+	// direction
+
+	double getDirection() const noexcept
+	{
+		return m_direction;
+	}
+
+	void setDirection(double direction = DEFAULT_DIRECTION) noexcept
+	{
+		m_direction = direction;
+	}
+
+	// angle
+
+	uint16_t getAngle() const noexcept
+	{
+		return m_angle;
+	}
+
+	void setAngle(uint16_t angle = DEFAULT_ANGLE) noexcept
+	{
+		m_angle = angle;
+	}
+
+	// color
+
+	sf::Color getColor() const noexcept
+	{
+		return m_color;
+	}
+
+	void setColor(sf::Color color = sf::Color::White) noexcept
+	{
+		m_color = color;
+	}
+
+	// spray amount
+
+	uint16_t getSprayAmount() const noexcept
+	{
+		return m_sprayAmount;
+	}
+
+	void setSprayAmount(uint16_t sprayAmount = DEFAULT_SPRAY_AMOUNT) noexcept
+	{
+		m_sprayAmount = sprayAmount;
+	}
+
+	// span
+
+	uint16_t getSpan() const noexcept
+	{
+		return m_span;
+	}
+
+	void setSpan(uint16_t span = DEFAULT_SPAN) noexcept
+	{
+		m_span = span;
+	}
+
+	// gap
+
+	uint8_t getGap() const noexcept
+	{
+		return m_gap;
+	}
+
+	void setGap(uint8_t gap = DEFAULT_GAP) noexcept
+	{
+		m_gap = gap;
+	}
+
+	// max velocity
+
+	uint32_t getMaxVelocity() const noexcept
+	{
+		return m_maxVelocity;
+	}
+
+	void setMaxVelocity(uint32_t maxVelocity = DEFAULT_MAX_VELOCITY) noexcept
+	{
+		m_maxVelocity = maxVelocity;
 	}
 
 private:
@@ -173,7 +255,15 @@ private:
 
 	mutable bb::ECS<sf::Vertex, double, double, sf::Vector2f>::C8 m_ecs;
 
-	enum { VERTEX, DALPHA, ALPHA, VELOCITY };
+	enum { VERTEX, DALPHA, ALPHA, VELOCITY, 
+		DEFAULT_DIRECTION = 0, 
+		DEFAULT_ANGLE = 20, 
+		DEFAULT_COUNT = 10000, 
+		DEFAULT_SPRAY_AMOUNT = 100, 
+		DEFAULT_SPAN = 50, 
+		DEFAULT_GAP = 0, 
+		DEFAULT_MAX_VELOCITY = 100 
+	};
 
 	
 	sf::Vector2f m_source;
@@ -185,7 +275,7 @@ private:
 	
 	sf::Color m_color;
 
-	uint32_t m_count;
+	const uint32_t m_count;
 
 	uint16_t m_sprayAmount;
 
