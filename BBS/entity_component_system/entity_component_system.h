@@ -168,7 +168,7 @@ namespace bb
 
 	ecs.kill_entity(entity);
 
-	Takes an ENTITY object, kills it be replacing it with the last entity... as mentioned
+	Takes an ENTITY object, kills it by replacing it with the last entity... as mentioned
 	above, in the inner working section.
 
 	Accessing a Component Vector:
@@ -517,6 +517,8 @@ class bb::ENTITY_COMPONENT_SYSTEM
 
 		temp_entity.id = ++top;
 
+		// setting entity bitmask
+
 		entity_list[top] = (((ENTITY_BITMASK_TYPE)1 << index_of_component) | ...);
 
 		return temp_entity;
@@ -543,6 +545,8 @@ class bb::ENTITY_COMPONENT_SYSTEM
 		// incrementing the top to push a new entity
 
 		temp_entity.id = ++top;
+
+		// setting entity bitmask
 
 		entity_list[top] = -1;
 		
