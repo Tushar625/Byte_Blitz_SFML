@@ -16,9 +16,11 @@
 
 	explo.create(...);
 
-	call update() and render() of 'explo' from Update() and Render() of game
-	loop to display the effect.
+	call update() of 'explo' from Update() and call window.draw(explo) from
+	Render() of game loop to display the effect.
 
+	here we have used an ECS to store the particles
+	
 	internal arrays are used to store the particles, create() creates those
 	arrays and update() autometically clears them once the show is over, you
 	can also clear them with clear() and check if they are empty or not with

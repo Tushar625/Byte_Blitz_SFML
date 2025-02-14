@@ -11,6 +11,26 @@ namespace bb
 }
 
 
+/*
+	To create the exhaust animation,
+
+	declare an object of Exhaust class
+
+	Exhaust exhaust;
+
+	customize the effect with the getter and setter functions, defined in
+	the class
+
+	and call the spray() to "spray" certain no. of particles, call it
+	repeatedly to create the exhaust effect
+
+	exhaust.spray();
+
+	call spray() of 'exhaust' from Update() and call window.draw(exhaust) from
+	Render() of game loop to display the effect.
+*/
+
+
 class bb::Exhaust : public sf::Drawable
 {
 public:
@@ -141,6 +161,21 @@ public:
 		getters and setters:
 
 		use them to customize the exhaust animation
+
+		notes:
+
+		set direction and angle data in degrees
+
+		if you increase the max velocity and the animation becomes bad
+		increase the span make it more than 50% of the max velocity
+
+		spray amount should be around 10% of total particle count else
+		the animation starts off with a pulse
+
+		These numbers are just some estimates, you may need to fiddle
+		with these parameter a bit to get the perfect exhaust animation
+
+		better don't change count, spray amount and maximum valocity
 	*/
 
 	// source
@@ -265,23 +300,26 @@ private:
 		DEFAULT_MAX_VELOCITY = 100 
 	};
 
-	
-	sf::Vector2f m_source;
 
-	double m_direction;
-
-	uint16_t m_angle;
+	// following parameters are used to customize the exhaust animation
 
 	
-	sf::Color m_color;
+	sf::Vector2f m_source;	// source point of spray
 
-	const uint32_t m_count;
+	double m_direction;	// direction of spray in angle
 
-	uint16_t m_sprayAmount;
+	uint16_t m_angle;	// spread of the spray in angle
 
-	uint16_t m_span;
+	
+	sf::Color m_color;	// color of the exhaust
 
-	uint8_t m_gap;
+	const uint32_t m_count;	// total count of particles in this simulation
 
-	uint32_t m_maxVelocity;
+	uint16_t m_sprayAmount;	// no. of particles created by one call to spray()
+
+	uint16_t m_span;	// length of the tail of exhaust while it's not moving
+
+	uint8_t m_gap;	//	distance between the source and the place where the particles appear
+
+	uint32_t m_maxVelocity;	// maximum velocity of the particles
 };
