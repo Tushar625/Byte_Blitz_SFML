@@ -171,6 +171,10 @@ namespace bb
 	Takes an ENTITY object, kills it by replacing it with the last entity... as mentioned
 	above, in the inner working section.
 
+	!!!! Remember after killing an entity any reference to its components start to point to a new
+	!!!! entity (the last entity that replaced it), so treat them as invalids. Hence, in a nutshell
+	**** any reference to the components of killed entity becomes invalid ***
+
 	Accessing a Component Vector:
 	-----------------------------
 
@@ -184,12 +188,31 @@ namespace bb
 	Accessing an Entity:
 	--------------------
 
-	auto& entity = ecs.entity(2);
+	auto entity = ecs.entity(2);
 
 	Takes the entity id (here, 2), returns a reference to corresponding ENTITY object.
 	
 	I used "auto" as the name of the datatype, "ENTITY_COMPONENT_SYSTEM<int, float, pos, int>::ENTITY",
 	is very long.
+
+	!!!! note that "ecs.entity(id)" always returns a reference to the same internal variable,
+	hence, don't create a reference variable with it, reason is described below,
+
+	auto& entity_1 = ecs.entity(2);
+
+	auto& entity_2 = ecs.entity(4);
+
+	If you create these two reference variables both of them will reference to the same internal
+	variable and both will reference to the entity with id = 4. This may also add some unexplainable
+	behaviour in the program.
+
+	**** Hence, if you need to create entity objects, create as follows, ****
+	
+	auto entity_1 = ecs.entity(2);
+
+	auto entity_2 = ecs.entity(4);
+
+	Create references only under extreme performance contraints & at your own risk.
 
 	Get the Number of Components and Entities:
 	------------------------------------------
@@ -322,7 +345,7 @@ class bb::ENTITY_COMPONENT_SYSTEM
 		Usually, I don't use this big structure name to create an Entity object, just use the entity()
 		method of ECS object, as shown below,
 
-		auto& entity = ecs.entity(0);
+		auto entity = ecs.entity(0);
 
 		[entity(entity_id) returns a reference to an ENTITY object, whose "id" is set to entity_id]
 
