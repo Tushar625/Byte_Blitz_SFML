@@ -18,6 +18,8 @@ namespace bb {
 	need to move between devices. It’s ideal for games because it doesn’t require elevated
 	permissions, isolates data for each user, and avoids unnecessary syncing, making it perfect
 	for storing large or hardware-dependent save files and temporary data.
+
+	note: If you fail to store data into a path try another one
 */
 
 // Function to get the path to Local AppData folder
