@@ -112,7 +112,9 @@ public:
 
 			// getting components of the velocity
 
-			particle.get<VELOCITY>() = source_velocity + sf::Vector2f(static_cast<float>(sin(angle) * velo), static_cast<float>(cos(angle) * velo));
+			float factor = (rand() % 501 + 500) / 1000.0f;
+
+			particle.get<VELOCITY>() = sf::Vector2f(source_velocity.x * factor, source_velocity.y * factor) + sf::Vector2f(static_cast<float>(sin(angle) * velo), static_cast<float>(cos(angle) * velo));
 
 			particle.get<VERTEX>() = sf::Vertex(source, color);
 		}
@@ -158,13 +160,10 @@ public:
 
 			// calculating accn from velocity to simulate drag
 
-			if(std::abs(velocity.x) > 3 && std::abs(velocity.y) > 3)
-			{
-				accn.x = -(rand() % 21 + 10) * velocity.x;
+			accn.x = -(rand() % 21 + 10) * velocity.x;
 
-				accn.y = -(rand() % 21 + 10) * velocity.y;
-			}
-
+			accn.y = -(rand() % 21 + 10) * velocity.y;
+			
 			velocity.x += static_cast<float>(accn.x * dt);
 
 			velocity.y += static_cast<float>(accn.y * dt);
