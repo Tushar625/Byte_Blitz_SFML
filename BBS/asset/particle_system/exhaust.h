@@ -35,6 +35,16 @@ class bb::Exhaust : public sf::Drawable
 {
 public:
 
+	void clear()
+	{
+		m_ecs.clear();
+	}
+
+	bool empty()
+	{
+		return m_ecs.empty();
+	}
+
 	/*
 		spray <= "m_sprayAmount" no. of particles, call this function repeatedly
 		to get a consistent spray of particles
