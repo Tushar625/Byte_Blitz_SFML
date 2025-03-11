@@ -173,7 +173,20 @@ namespace bb
 
 	!!!! Remember after killing an entity any reference to its components start to point to a new
 	!!!! entity (the last entity that replaced it), so treat them as invalids. Hence, in a nutshell
-	**** any reference to the components of killed entity becomes invalid ***
+	**** any reference to the components of killed entity becomes invalid ****
+	
+	
+	!!!! In an (say i'th) iteration of a loop, after you killed i'th emtity, it's place gets occupied by
+	!!!! a different entity, so be careful. Say i'th element is the last entity, you delete another entity
+	!!!! so original i'th entity gets shifted, after that you add some more entities, so now i'th entity
+	!!!! has changed completely, if you delete it again you would accidentally delete that new entity. Same
+	!!!! thing can happen if you try to delete some other entity after deleting i'th entity, if i'th is not
+	!!!! the last one, but one of the other entities was the last one.
+
+	**** Hence, to be on the safe side, In i'th iteration of a loop, kill only i'th entity. In case you ****
+	**** kill other entities, don't kill the i'th entity afterwards, and also kill other entities carefully ****
+	**** to make sure no entity gets deleted accidentally or fails to delete. ****
+
 
 	Accessing a Component Vector:
 	-----------------------------
