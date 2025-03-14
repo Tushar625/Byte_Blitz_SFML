@@ -9,6 +9,12 @@
 
 #include<limits>
 
+#include<numbers>
+
+#include<concepts>
+
+#include<type_traits>
+
 
 namespace bb{
 
@@ -251,6 +257,66 @@ inline collision_box_side_metric circle_aabb_collision_side(double& x, double& y
 	}
 
     return cd;
+}
+
+/*
+	this template function detects if a 2D point is inside a 2D polygon or not
+
+	it takes a point and a vector of points representing a polygon, just
+	remember that **** the first and last point should be same to represent
+	a closed polygon
+
+	the point should be represented by a structure with two members x and y,
+	they should have same types, capable of arithmetic operations
+*/
+
+template<typename COORD2D> requires std::same_as<decltype(COORD2D::x), decltype(COORD2D::y)>&& std::is_arithmetic_v<decltype(COORD2D::x)>&& std::is_arithmetic_v<decltype(COORD2D::y)>
+
+inline bool point_polygon_collision(const COORD2D& point, const std::vector<COORD2D>& polygon)
+{
+	/*
+		we imagine a horizontal line point -> ray_end, with same y
+	*/
+
+	COORD2D rey_end{ std::numeric_limits<decltype(COORD2D::x)>::max(), point.y };
+
+	/*
+		we count how many times this horizontal line intersects the lines of polygon
+		if the count is odd then the point is inside else the point is outside
+	*/
+
+	uint16_t intersection_count = 0;
+
+	for (size_t i = 1; i < polygon.size(); i++)
+	{
+		const COORD2D& p1 = polygon[i - 1];
+
+		const COORD2D& p2 = polygon[i];
+
+		if ((p1.y <= point.y && point.y <= p2.y) || (p2.y <= point.y && point.y <= p1.y))
+		{
+			/*
+				this division here must be a floating point one as it represents the
+				slope of the line p1 -> p2
+
+				so, we use float, so that all integral values will be converted to float
+				but floating point values will retain their types, and the loss of precision
+				for float conversion is minimal, this is also advantageous as float doesn't
+				take lots of space, hence better performance or speed
+			*/
+
+			// we are calculating the x of the point of intersection
+
+			auto intersect_x = ((float)(p2.x - p1.x) / (p2.y - p1.y)) * (point.y - p1.y) + p1.x;
+
+			if (point.x <= intersect_x && intersect_x <= rey_end.x)
+			{
+				intersection_count++;
+			}
+		}
+	}
+
+	return intersection_count % 2;	// odd == collision
 }
 
 } // namespace bb
