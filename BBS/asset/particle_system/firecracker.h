@@ -21,10 +21,10 @@
 
 	here we have used an ECS to store the particles
 	
-	internal arrays are used to store the particles, create() creates those
-	arrays and update() autometically clears them once the show is over, you
-	can also clear them with clear() and check if they are empty or not with
-	empty() (this paragraph needs upgrade)
+	internal arrays are used (by ECS) to store the particles, create() creates
+	new particles and stores them into ECS and update() deletes each particle
+	once their alpha is 0. You can also clear the ECS with clear() and check
+	if it is empty or not with empty().
 */
 
 

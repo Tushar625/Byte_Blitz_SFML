@@ -6,11 +6,11 @@
 
 
 /*
-	To create the explosion or firecracker effect,
+	To create the explosion in space effect,
 
-	declare an object of Firecracker class
+	declare an object of SpaceExplosion class
 
-	Firecracker explo;
+	SpaceExplosion explo;
 
 	and call the create() with appropriate arguments to start an explosion
 
@@ -21,10 +21,10 @@
 
 	here we have used an ECS to store the particles
 	
-	internal arrays are used to store the particles, create() creates those
-	arrays and update() autometically clears them once the show is over, you
-	can also clear them with clear() and check if they are empty or not with
-	empty() (this paragraph needs upgrade)
+	internal arrays are used (by ECS) to store the particles, create() creates
+	new particles and stores them into ECS and update() deletes each particle
+	once their alpha is 0. You can also clear the ECS with clear() and check
+	if it is empty or not with empty().
 */
 
 
@@ -66,7 +66,8 @@ public:
 	}
 
 	/*
-		create a new firecracker effect at a new source point
+		create a new space explosion effect at a new source point, you can also input
+		velocity of the exploding object.
 
 		create simply increases size of internal arrays to fit more vertices
 		when all the particles disappear all the arrays are cleared
@@ -110,9 +111,12 @@ public:
 
 			int velo = rand() % static_cast<int>(span * span / lifeTime * lifeTime * .35);
 
-			// getting components of the velocity
+			/*
+				getting components of the velocity and adding a random fraction of source velocity, i.e.,
+				velocity of the exploding object to it
+			*/
 
-			float factor = (rand() % 501 + 500) / 1000.0f;
+			float factor = (rand() % 501 + 500) / 1000.0f;	// 0.5 - 1.0
 
 			particle.get<VELOCITY>() = sf::Vector2f(source_velocity.x * factor, source_velocity.y * factor) + sf::Vector2f(static_cast<float>(sin(angle) * velo), static_cast<float>(cos(angle) * velo));
 
@@ -158,7 +162,7 @@ public:
 
 			particle.color.a = static_cast<uint8_t>(alpha);
 
-			// calculating accn from velocity to simulate drag
+			// calculating accn from velocity to simulate drag, drag coeff. is random, as it's in space
 
 			accn.x = -(rand() % 21 + 10) * velocity.x;
 
