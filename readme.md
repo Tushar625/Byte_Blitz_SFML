@@ -14,21 +14,28 @@ To know more about how to set it up with Visual Studio 2022, check out **setup_d
  - Multithreaded Game Loop (well synchronized Update and Render threads)
  - A proper State Machine
  - Buttons and Button_List to create Menus
- - AABB and Circle-AABB collision detection system
+ - AABB, Circle-AABB and Point-Polygon collision detection system
  - Floating point comparison functions
  - AABB position functions
- - A particle system to create Firecracker effect
+ - Particle Systems to create Firecracker, Space Explosion and Rocket Exhaust effect
  - User friendly Input and Window management systems
- - Functions to access windows AppData folder to store and retrive game data 
+ - Functions to access windows AppData folder to store and retrive game data
+ - Simple Entity Component System
 
-***
+## Upcoming features:
 
-I shall create a proper manual discussing more about these features in future...
+ - Proper File Management Support
+ - Support for SFML3
+ - proper manual discussing more about these features
 
 ## Examples
 
 Here, I demonstrate some projects I made with this game engine:
 
- - [Firecrackers effect demo](https://www.reddit.com/r/sfml/s/SpdUVcmMU4)
+ - [Firecrackers effect demo](https://youtu.be/YeL1om8kj_c?si=6ZHs3b3YPcj_yIH_)
+
+ - [Comet demo](https://youtu.be/Mv0A1ozgaUU?si=exDamSXl9cubsKou)
 
  - [BREAKOUT](https://github.com/Tushar625/BREAKOUT)
+
+ - [ASTEROIDS](https://github.com/Tushar625/Asteroids)
