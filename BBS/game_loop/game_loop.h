@@ -115,7 +115,7 @@ class bb::GAME_LOOP
 			{
 				// waiting for render to be unlocked
 
-				while(lock == false);
+				lock.wait(false);
 
 				fps = 1 / FRAME_RATE_STABILIZER.dt;
 
@@ -126,6 +126,8 @@ class bb::GAME_LOOP
 				ut_accumulator += FRAME_RATE_STABILIZER.dt;
 
 				lock = false;	// unlock the update
+
+				lock.notify_all();
 			}
 
 			Print();  // to print the default frame or canvas on screen
@@ -171,7 +173,7 @@ class bb::GAME_LOOP
 				{
 					// waiting for update to be unlocked
 
-					while(lock == true);
+					lock.wait(true);
 
 					while(ut_accumulator > udt)
 					{
@@ -186,6 +188,8 @@ class bb::GAME_LOOP
 					}
 
 					lock = true;	// unlock the render
+
+					lock.notify_all();
 				}
 
 			}while(loop_continue);

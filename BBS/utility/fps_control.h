@@ -92,6 +92,13 @@ class bb::FPS_CONTROL
         required_delay = std::chrono::duration<double>{1 / target_fps};
     }
 
+	// set the delay between 2 frames in seconds
+
+	void set_interval(double interval_sec)
+    {
+        required_delay = std::chrono::duration<double>{interval_sec};
+    }
+
     // initialize dt and fps and time count system
 
     void initialize()
