@@ -3,14 +3,16 @@
 #include"../utility/pos_fun.h"
 #include<vector>
 #include<utility>
-#include<concepts>
+#include<functional>
 
 
 namespace bb
 {
 	class BUTTON;
 
-	class BUTTON_LIST;
+	template<typename BUTTON_TYPE>
+
+	class MENU;
 }
 
 
@@ -88,17 +90,17 @@ class bb::BUTTON
         else x, y won't be calculated accurately!!!!!
     */
 
-    void set_pos(int xin, int yin, COORD_POSITION pos = TOP_LEFT)
+    void set_pos(int xin, int yin, COORD_POSITION pos = TOP_LEFT) noexcept
     {
         to_top_left(this->x, this->y, xin, yin, height, width, pos);
     }
 
-	void set_x(int xin)
+	void set_x(int xin) noexcept
     {
         this->x = xin;
     }
 
-    void set_y(int yin)
+    void set_y(int yin) noexcept
     {
         this->y = yin;
     }
@@ -118,17 +120,17 @@ class bb::BUTTON
 
     // use these to set dimension
 
-    void set_height(int height)
+    void set_height(int height) noexcept
     {
         this->height = height;
     }
 
-    void set_width(int width)
+    void set_width(int width) noexcept
     {
         this->width = width;
     }
 
-	bool set_size(int height, int width)
+	bool set_size(int height, int width) noexcept
     {
         if(height <= 0 || width <= 0)
 			return false;
@@ -146,17 +148,17 @@ class bb::BUTTON
 
     // use these to get position
 
-    void get_pos(int &xout, int &yout, COORD_POSITION pos = TOP_LEFT) const
+    void get_pos(int &xout, int &yout, COORD_POSITION pos = TOP_LEFT) const noexcept
     {
         from_top_left(xout, yout, this->x, this->y, height, width, pos);
     }
 
-    int get_x() const
+    int get_x() const noexcept
     {
         return x;
     }
 
-    int get_y() const
+    int get_y() const noexcept
     {
         return y;
     }
@@ -164,17 +166,17 @@ class bb::BUTTON
 
     // use these to get dimension
 
-    int get_height() const
+    int get_height() const noexcept
     {
         return height;
     }
 
-    int get_width() const
+    int get_width() const noexcept
     {
         return width;
     }
 
-	void get_size(int &height, int &width) const
+	void get_size(int &height, int &width) const noexcept
 	{
 		height = this->height;
 
@@ -184,7 +186,7 @@ class bb::BUTTON
 
     // render proper state of the button
     
-    void Render()
+    void Render() noexcept
     {
         switch(b_state)
         {
@@ -223,7 +225,7 @@ class bb::BUTTON
 
 	// virtual function to check if the cursor is on the button not
 
-	virtual bool is_cursor_on_button(int mouse_pos_x, int mouse_pos_y)
+	virtual bool is_cursor_on_button(int mouse_pos_x, int mouse_pos_y) const noexcept
 	{
 		return in_rng(x, mouse_pos_x, x + width - 1) && in_rng(y, mouse_pos_y, y + height - 1);
 	}
@@ -255,7 +257,7 @@ class bb::BUTTON
 		the button is released
 	*/
 
-   	bool is_clicked(int mouse_pos_x, int mouse_pos_y, bool is_clicked, bool is_released)
+   	bool is_clicked(int mouse_pos_x, int mouse_pos_y, bool is_clicked, bool is_released) noexcept
 	{
 		/*
 			here we implement the buttons using finite state machine, as its a lot more
@@ -332,7 +334,7 @@ class bb::BUTTON
         it only becomes false after the key is released
     */
 
-	bool is_down(int mouse_pos_x, int mouse_pos_y, bool is_clicked, bool is_released)
+	bool is_down(int mouse_pos_x, int mouse_pos_y, bool is_clicked, bool is_released) noexcept
 	{
 		/*
 			here we implement the buttons using finite state machine, as its a lot more
@@ -400,48 +402,83 @@ class bb::BUTTON
 
 
 /*
-	this is a general purpose prototype of menu list containing buttons in c++
-	this class is not dependent on this game engine, can be used with any other
-	game engine or project if needed
+	-----------------
+	Menu System (C++)
+	-----------------
 
-	it basically keeps track of a bunch of buttons (button list) created by BUTTON
-	class, and lets user to select them with with keyboard as well as mouse
+	This is a general-purpose prototype of a menu system for managing a group of buttons in C++.
+	The class is independent of the game engine, meaning it can be reused in other projects or engines.
 
-	How to use:
+	It manages a set of buttons of the same type (i.e., derived from the BUTTON base class) and
+	allows users to select them using both keyboard and mouse input.
 
-	first create several buttons (described in the description of BUTTON class)
+	----------
+	How to Use
+	----------
 
-	create an object of BUTTON_LIST and initialize them with pointers to those
-	buttons
+	1. Create a MENU object and initialize it with any number of button objects of the same type:
 
-	Example: BUTTON_LIST menu({&b1, &b2, &b3, &b4});	// here b1, b2, b3, b4 are previously created button (object)
+		MENU menu({b1, b2, b3, b4}); // b1, b2, b3, b4 are buttons of same type
 
-	the button pinters inserted will be stored in an array with index 0 -> (n - 1)
-	n = no. of buttons
+		The buttons will be stored in an internal array with indices ranging from 0 to n - 1,
+		where n is the number of buttons.
 
-	call the public 'Update' method of this object from the update or processing
-	function of the game loop, it processes and updates the list of buttons and
-	the menu selector (more about menu selector below the class)
+	2. Call Update() in your game loop’s update or processing function:
 
-	call the public 'Render' method of this object from the render function of
-	the game loop to render the menu list.
+		* Handles both mouse and keyboard input
 
-	you can use get_mbutton, get_button method or overloaded [] operator to get individual
-	button as BUTTON (or its child class) object (here we return BUTTON object by reference,
-	described below ...)
+		* Updates the internal state of buttons
 
-	we also provide is_valid_index, get_bcount, get_mindex to check an index, number of
-	elements in button list and index of the button currently pointed by the selector
-	respectively
+		* Returns the index of the selected button, or -1 if none is selected
+
+	3. Call Render() in your render function to draw the menu and all buttons.
+
+	----------------
+	Member Functions
+	----------------
+
+	* get_mbutton() - access the button currently pointed to by the selector
+	
+	* menu[i] – access ith button
+
+	* is_valid_index(i) – check if an index is within bounds
+
+	* get_bcount() – get the total number of buttons
+
+	* get_mindex() – get the index currently pointed to by the selector
+	
+	-------------------------
+	Custom Selector Rendering
+	-------------------------
+
+	To render a selector (a symbol indicating the currently selected menu item),
+	you must pass a function to the Render() method.
+
+	This function should follow the signature:
+
+		void function_name(MENU& menu)
+		{
+			// use menu.get_mindex() to access currently selected button draw the selector
+		}
+
+		* It receives the current MENU object by reference.
+		
+		* Use its methods to access the currently selected index and draw the selector accordingly.
+
+	!!!! Important !!!!
+	
+	Do not call Update() or Render() from within this function — doing so will cause undefined behavior.
 */
 
-class bb::BUTTON_LIST
+template<typename BUTTON_TYPE>
+
+class bb::MENU
 {
 	/*
-		its an array of pointers to button objects or buttons
+		vector of buttons
 	*/
 
-	std::vector<BUTTON*> button_list;
+	std::vector<BUTTON_TYPE> button_list;
 
 	/*
 		index of currently selected button
@@ -454,15 +491,24 @@ public:
 	// constructor
 
 	/*
-		takes a list of pointers to buttons and creates the button_list
+		takes a vector of buttons, creates the button_list and selects the first button
+
+		----------------------------------------------------------------------------------------
+		here's why we use pass-by-value for the button list, instead of const pass-by-reference:
+		----------------------------------------------------------------------------------------
+
+		"The pass-by-value advice is suitable only for parameters that the function would copy anyway.
+		In that case, by using pass-by-value semantics, the code is optimal for both lvalues and rvalues.
+		If an lvalue is passed in, it’s copied exactly one time, just as with a reference-to-const parameter.
+		And, if an rvalue is passed in, no copy is made, just as with an rvalue reference parameter."
+
+		page 305, Professional C++ by Marc Gregoire, Nicholas A. Solter, Scott Meyers
 	*/
 
-	BUTTON_LIST(std::vector<BUTTON*> button_list)
-	{
-		this->button_list = std::move(button_list);
-
-		bindex = 0;	// select the first button
-	}
+	MENU(std::vector<BUTTON_TYPE> _button_list) :
+		button_list(std::move(_button_list)),
+		bindex(0)	// select the first button
+	{}
 
 	// general methods
 
@@ -470,7 +516,7 @@ public:
 		check if the given index is valid or not
 	*/
 
-	bool is_valid_index(int index) const
+	bool is_valid_index(int index) const noexcept
 	{
 		return 0 <= index && index < button_list.size();
 	}
@@ -479,14 +525,14 @@ public:
 		updates the button list, the formal parameter given to it can
 		be divided into 2 parts
 
-		#1
+		#1 Mouse Input
 
 		int mouse_x, int mouse_y, bool is_clicked, bool is_released
 
 		these 4 are to monitor if a button is clicked with the mouse or not
 		they are compulsary
 
-		#2
+		#2 Keyboard Input
 
 		bool up_pressed = false, bool down_pressed = false, bool enter_pressed = false
 
@@ -497,7 +543,7 @@ public:
 		returns the button selected or clicked else returns -1
 	*/
 
-	int Update(int mouse_x, int mouse_y, bool is_clicked, bool is_released, bool up_pressed = false, bool down_pressed = false, bool enter_pressed = false)
+	int Update(int mouse_x, int mouse_y, bool is_clicked, bool is_released, bool up_pressed = false, bool down_pressed = false, bool enter_pressed = false) noexcept
 	{
 		int button_selected = -1;
 
@@ -511,7 +557,7 @@ public:
 
 		for (int i = 0; i < n; i++)
 		{
-			if (button_list[i]->is_clicked(mouse_x, mouse_y, is_clicked, is_released))
+			if (button_list[i].is_clicked(mouse_x, mouse_y, is_clicked, is_released))
 			{
 				button_selected = i;
 			}
@@ -550,24 +596,21 @@ public:
 	}
 
 	/*
-		to render the buttons and selector on the screen
+		renders the buttons and selector on the screen
 
-		it takes a function pointer with return type "void" and one input parameter
-		of type "BUTTON_LIST &"
-
-		here we check the type of input parameter at compile time, it also prevents
-		users from sending nullptr as argument, without any runtime overhead
+		it takes a function that takes a reference to the current MENU object as an argument
+		and renders the selector on the screen
 	*/
 
-	void Render(std::same_as<void (*) (BUTTON_LIST &)> auto const render_button_selector)
+	void Render(const std::function<void(MENU&)> render_button_selector) noexcept
 	{
 		render_button_selector(*this);	// to render the menu selector
 
 		// rendering the buttons
 
-		for(const auto& button : button_list)
+		for (auto& button : button_list)
 		{
-			button->Render();
+			button.Render();
 		}
 	}
 
@@ -576,7 +619,7 @@ public:
 		bcount: button_count
 	*/
 
-	size_t get_bcount() const
+	size_t get_bcount() const noexcept
 	{
 		return button_list.size();
 	}
@@ -586,109 +629,27 @@ public:
 		mindex: marked_index
 	*/
 
-	int get_mindex() const
+	int get_mindex() const noexcept
 	{
 		return bindex;
 	}
 
 	/*
-		Following three methods return BUTTON object by reference, that means the
-		original BUTTON object which resides in the list is returned, this process
-		is fast and efficient and lets you to modify the button directly, but being
-		an abstract class BUTTON class can't have a physical object, actually the
-		object returned here is, object of a class derived from the BUTTON class,
-		induced into a BUTTON object (that means, you can only access the members
-		defined in BUTTON class through this object, nothing that belongs to the
-		derived class can be accessed, but the virtual methods in BUTTON class will
-		be overridden or replaced by proper methods of derived class). Hence, it
-		behaves just like a 'BUTTON object', though you can't create a copy of it
-		by assigning it to a BUTTON object as you won't be able to create any
-		BUTTON object. If you need to assign this object to some variable use
-		a reference to BUTTON class. i.e.,
-
-		BUTTON &button = get_button_pt();
-
-		This way you can access the button returned by the method directly through
-		the reference button without creating any copy of it. button will behave
-		just like a BUTTON object.
-
-		Note: We used template with next two methods so that they can return button
-		object of a class derived from BUTTON
-	*/
-
-	/*
-		get the BUTTON object pointed by the selector
+		get the BUTTON_TYPE object pointed by the selector
 		mbutton: marked_button
-
-		if you want this method to return a button object of a specific type (say,
-		a type or class derived from BUTTON), call it as,
-		obj.get_mbutton<derived_button_type_name>()
 	*/
 
-	template<class button_type = BUTTON>
-
-	button_type& get_mbutton() const
+	BUTTON_TYPE& get_mbutton() noexcept
 	{
-		return *((button_type *)button_list[bindex]);
+		return button_list[bindex];
 	}
 
 	/*
-		get a BUTTON object in the list
-
-		if you want this method to return a button object of a specific type (say,
-		a type or class derived from BUTTON), call it as,
-		obj.get_button<derived_button_type_name>()
+		overloaded [] operator to access a BUTTON_TYPE object in the list
 	*/
 
-	template<class button_type = BUTTON>
-
-	button_type& get_button(int i) const
+	BUTTON_TYPE& operator [] (int i) noexcept
 	{
-		return *((button_type *)button_list[i]);
-	}
-
-	/*
-		overloaded [] operator to access a BUTTON object in the list
-	*/
-
-    BUTTON& operator [] (int i) const
-	{
-		return *(button_list[i]);
+		return button_list[i];
 	}
 };
-
-/*
-	you need to send a function pointer to the render function to print the
-	selecter i.e., the symbol that indicates which menu is selected
-
-	this function should look like
-
-	void function_name(BUTTON_LIST &blist)
-	{}
-
-	it receives a reference to the the current BUTTON_LIST object as an argument
-
-	this function can be inline also
-
-	what should you define inside this fuction?
-
-	you can use,
-
-	BUTTON& get_mbutton() const
-
-	(returns the button currently pointed by selector)
-
-	overloaded [] operator or button_type& get_button(int i) const
-
-	(returns the ith button)
-
-	or you can use,
-
-	int get_bcount() const
-
-	bool is_valid_index(int index) const
-
-	along with some code to draw or print a symbol to indicate which button or menu is selected
-
-	!!!! never call update or render methods from this function !!!!
-*/
