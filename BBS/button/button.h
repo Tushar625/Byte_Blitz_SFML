@@ -60,7 +60,7 @@ class bb::BUTTON
 
     // button data
     
-    int x, y, height, width;
+    float x, y, height, width;
 
 	BUTTON_STATE b_state;
 
@@ -90,17 +90,17 @@ class bb::BUTTON
         else x, y won't be calculated accurately!!!!!
     */
 
-    void set_pos(int xin, int yin, COORD_POSITION pos = TOP_LEFT) noexcept
+    void set_pos(float xin, float yin, COORD_POSITION pos = TOP_LEFT) noexcept
     {
         to_top_left(this->x, this->y, xin, yin, height, width, pos);
     }
 
-	void set_x(int xin) noexcept
+	void set_x(float xin) noexcept
     {
         this->x = xin;
     }
 
-    void set_y(int yin) noexcept
+    void set_y(float yin) noexcept
     {
         this->y = yin;
     }
@@ -120,17 +120,17 @@ class bb::BUTTON
 
     // use these to set dimension
 
-    void set_height(int height) noexcept
+    void set_height(float height) noexcept
     {
         this->height = height;
     }
 
-    void set_width(int width) noexcept
+    void set_width(float width) noexcept
     {
         this->width = width;
     }
 
-	bool set_size(int height, int width) noexcept
+	bool set_size(float height, float width) noexcept
     {
         if(height <= 0 || width <= 0)
 			return false;
@@ -148,17 +148,17 @@ class bb::BUTTON
 
     // use these to get position
 
-    void get_pos(int &xout, int &yout, COORD_POSITION pos = TOP_LEFT) const noexcept
+    void get_pos(float& xout, float& yout, COORD_POSITION pos = TOP_LEFT) const noexcept
     {
         from_top_left(xout, yout, this->x, this->y, height, width, pos);
     }
 
-    int get_x() const noexcept
+	float get_x() const noexcept
     {
         return x;
     }
 
-    int get_y() const noexcept
+	float get_y() const noexcept
     {
         return y;
     }
@@ -166,17 +166,17 @@ class bb::BUTTON
 
     // use these to get dimension
 
-    int get_height() const noexcept
+	float get_height() const noexcept
     {
         return height;
     }
 
-    int get_width() const noexcept
+	float get_width() const noexcept
     {
         return width;
     }
 
-	void get_size(int &height, int &width) const noexcept
+	void get_size(float& height, float& width) const noexcept
 	{
 		height = this->height;
 
@@ -225,7 +225,7 @@ class bb::BUTTON
 
 	// virtual function to check if the cursor is on the button not
 
-	virtual bool is_cursor_on_button(int mouse_pos_x, int mouse_pos_y) const noexcept
+	virtual bool is_cursor_on_button(float mouse_pos_x, float mouse_pos_y) const noexcept
 	{
 		return in_rng(x, mouse_pos_x, x + width - 1) && in_rng(y, mouse_pos_y, y + height - 1);
 	}
@@ -257,7 +257,7 @@ class bb::BUTTON
 		the button is released
 	*/
 
-   	bool is_clicked(int mouse_pos_x, int mouse_pos_y, bool is_clicked, bool is_released) noexcept
+   	bool is_clicked(float mouse_pos_x, float mouse_pos_y, bool is_clicked, bool is_released) noexcept
 	{
 		/*
 			here we implement the buttons using finite state machine, as its a lot more
@@ -334,7 +334,7 @@ class bb::BUTTON
         it only becomes false after the key is released
     */
 
-	bool is_down(int mouse_pos_x, int mouse_pos_y, bool is_clicked, bool is_released) noexcept
+	bool is_down(float mouse_pos_x, float mouse_pos_y, bool is_clicked, bool is_released) noexcept
 	{
 		/*
 			here we implement the buttons using finite state machine, as its a lot more
@@ -543,7 +543,7 @@ public:
 		returns the button selected or clicked else returns -1
 	*/
 
-	int Update(int mouse_x, int mouse_y, bool is_clicked, bool is_released, bool up_pressed = false, bool down_pressed = false, bool enter_pressed = false) noexcept
+	int Update(float mouse_x, float mouse_y, bool is_clicked, bool is_released, bool up_pressed = false, bool down_pressed = false, bool enter_pressed = false) noexcept
 	{
 		int button_selected = -1;
 

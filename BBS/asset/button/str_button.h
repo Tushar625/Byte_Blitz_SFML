@@ -34,8 +34,7 @@ namespace bb
 				"Start",
 				sf::Color(48, 96, 130),
 				sf::Color(99, 155, 255),
-				x,
-				y,
+				sf::Vector2f(x, y),
 				bb::TOP_CENTER
 			)
 
@@ -95,7 +94,7 @@ public:
 
 	
 
-	STR_BUTTON(const sf::Text& text, const std::string& button_str, const sf::Color& _ordinary_color, const sf::Color& _hover_color, int x, int y, bb::COORD_POSITION pos = bb::TOP_LEFT)
+	STR_BUTTON(const sf::Text& text, const std::string& button_str, const sf::Color& _ordinary_color, const sf::Color& _hover_color, const sf::Vector2f& coord, bb::COORD_POSITION pos = bb::TOP_LEFT)
 	:	ordinary_color(_ordinary_color),
 		hover_color(_hover_color)
 	{
@@ -126,7 +125,7 @@ public:
 
 		// setiing button position
 
-		set_pos(x, y, pos);
+		set_pos(coord.x, coord.y, pos);
 	}
 
 
@@ -224,13 +223,12 @@ public:
 				sf::Color(48, 96, 130),
 				sf::Color(99, 155, 255),
 				10,
-				VIRTUAL_WIDTH / 2,
-				VIRTUAL_HEIGHT / 2 + 10,
+				sf::Vector2f(VIRTUAL_WIDTH / 2, VIRTUAL_HEIGHT / 2 + 10),
 				bb::TOP_CENTER
 			);
 	*/
 
-	static bb::MENU<STR_BUTTON> make_menu(sf::Text text, const std::vector<std::string>& str_list, const sf::Color& ordinary_color, const sf::Color& hover_color, int gap, int x, int y, bb::COORD_POSITION pos = bb::TOP_LEFT)
+	static bb::MENU<STR_BUTTON> make_menu(sf::Text text, const std::vector<std::string>& str_list, const sf::Color& ordinary_color, const sf::Color& hover_color, float gap, const sf::Vector2f& coord, bb::COORD_POSITION pos = bb::TOP_LEFT)
 	{
 		/*
 			getting height and width of the menu
@@ -245,9 +243,9 @@ public:
 				width of the widest button or text is the width of the menu
 		*/
 
-		int height = str_list.size() * (text.getCharacterSize() + gap) - gap;
+		float height = str_list.size() * (text.getCharacterSize() + gap) - gap;
 
-		int width = 0;
+		float width = 0;
 
 		// the text with maximum width
 
@@ -262,15 +260,15 @@ public:
 		}
 
 		/*
-			get X, Y of top center of the menu, which is the top center of the top botton
+			get x, y of top center of the menu, which is the top center of the top botton
 			since we are center aligning the buttons
 		*/
 
-		int X, Y;
+		float x, y;
 
-		bb::to_top_left(X, Y, x, y, height, width, pos);
+		bb::to_top_left(x, y, coord.x, coord.y, height, width, pos);
 
-		bb::from_top_left(X, Y, X, Y, height, width, bb::TOP_CENTER);
+		bb::from_top_left(x, y, x, y, height, width, bb::TOP_CENTER);
 
 		// let's make the button list vector
 
@@ -287,9 +285,9 @@ public:
 
 			auto pad = (text.getCharacterSize() - text.getLocalBounds().height) / 2;
 
-			button_list.push_back(STR_BUTTON(text, str, ordinary_color, hover_color, X, Y + pad, bb::TOP_CENTER));
+			button_list.push_back(STR_BUTTON(text, str, ordinary_color, hover_color, sf::Vector2f(x, y + pad), bb::TOP_CENTER));
 
-			Y += text.getCharacterSize() + gap;
+			y += text.getCharacterSize() + gap;
 		}
 
 		return bb::MENU<STR_BUTTON>(button_list);

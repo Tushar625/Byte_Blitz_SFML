@@ -70,9 +70,9 @@ public:
 			See pos_fun.h for more details on COORD_POSITION enum.
 	*/
 
-	void set(sf::Text text, const std::string& str, int gap, int x, int y, bb::COORD_POSITION pos = bb::TOP_LEFT)
+	void set(sf::Text text, const std::string& str, float gap, const sf::Vector2f& coord, bb::COORD_POSITION pos = bb::TOP_LEFT)
 	{
-		int X, Y, width, height;
+		float x, y, width, height;
 
 		m_textList.clear();	// clear previous text objects
 
@@ -83,7 +83,7 @@ public:
 			height of the text box is the height of the tallest character
 		*/
 
-		X = height = 0;
+		x = height = 0;
 
 		for (const auto& ch : str)
 		{
@@ -93,14 +93,14 @@ public:
 			{
 				text.setOrigin(text.getLocalBounds().getPosition());
 
-				text.setPosition(X, 0);
+				text.setPosition(x, 0);
 
 				m_textList.push_back(text);
 			}
 
-			// update position X
+			// update position x
 
-			X += text.getLocalBounds().width + gap;
+			x += text.getLocalBounds().width + gap;
 
 			// update height
 
@@ -110,17 +110,17 @@ public:
 			}
 		}
 
-		width = X - gap;	// no gap after the last character
+		width = x - gap;	// no gap after the last character
 
 		// Now we have height and width, lets get the real top left position of the text box.
 
-		bb::to_top_left(X, Y, x, y, height, width, pos);
+		bb::to_top_left(x, y, coord.x, coord.y, height, width, pos);
 
 		// moving the texts to their actual position, after we figure out the top left coordinates.
 
 		for (auto& text : m_textList)
 		{
-			text.move(X, Y);
+			text.move(x, y);
 		}
 	}
 
