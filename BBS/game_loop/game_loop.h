@@ -181,7 +181,7 @@ class bb::GAME_LOOP
 
 						if(Update(udt) == STOP_GAME_LOOP)
 						{
-							loop_continue = false;	// stop the render loop which later stops update loop
+							loop_continue = false;	// stop the update and render loop
 						}
 
 						ut_accumulator -= udt;
