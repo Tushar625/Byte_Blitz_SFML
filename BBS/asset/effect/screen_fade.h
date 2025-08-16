@@ -10,6 +10,13 @@
 
 
 
+namespace bb
+{
+	class ScreenFade;
+}
+
+
+
 /*
 	this class is used to create a fade in and fade out effect on the screen
 
@@ -67,7 +74,7 @@
 
 
 
-class ScreenFade
+class bb::ScreenFade
 {
 	sf::RectangleShape m_screen;	// the rectangle that covers the whole screen for fade effect
 

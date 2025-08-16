@@ -12,6 +12,13 @@
 
 
 
+namespace bb
+{
+	class Banner;
+}
+
+
+
 /*
 	this class is used to create a banner that falls from the top of the screen and
 	pauses in the middle of the screen for a specified duration before falling beyond
@@ -75,7 +82,7 @@
 
 
 
-class Banner
+class bb::Banner
 {
 	sf::Text m_text;
 	
