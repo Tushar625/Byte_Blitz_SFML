@@ -227,7 +227,7 @@ class bb::BUTTON
 
 	virtual bool is_cursor_on_button(float mouse_pos_x, float mouse_pos_y) const noexcept
 	{
-		return in_rng(x, mouse_pos_x, x + width - 1) && in_rng(y, mouse_pos_y, y + height - 1);
+		return in_rng_open(x, mouse_pos_x, x + width) && in_rng_open(y, mouse_pos_y, y + height);
 	}
 
 
@@ -423,7 +423,7 @@ class bb::BUTTON
 		The buttons will be stored in an internal array with indices ranging from 0 to n - 1,
 		where n is the number of buttons.
 
-	2. Call Update() in your game loop’s update or processing function:
+	2. Call Update() in your game loop's update or processing function:
 
 		* Handles both mouse and keyboard input
 
@@ -439,13 +439,13 @@ class bb::BUTTON
 
 	* get_mbutton() - access the button currently pointed to by the selector
 	
-	* menu[i] – access ith button
+	* menu[i] - access ith button
 
-	* is_valid_index(i) – check if an index is within bounds
+	* is_valid_index(i) - check if an index is within bounds
 
-	* get_bcount() – get the total number of buttons
+	* get_bcount() - get the total number of buttons
 
-	* get_mindex() – get the index currently pointed to by the selector
+	* get_mindex() - get the index currently pointed to by the selector
 	
 	-------------------------
 	Custom Selector Rendering
@@ -467,7 +467,7 @@ class bb::BUTTON
 
 	!!!! Important !!!!
 	
-	Do not call Update() or Render() from within this function — doing so will cause undefined behavior.
+	Do not call Update() or Render() from within this function, doing so will cause undefined behavior.
 */
 
 template<typename BUTTON_TYPE>
@@ -499,7 +499,7 @@ public:
 
 		"The pass-by-value advice is suitable only for parameters that the function would copy anyway.
 		In that case, by using pass-by-value semantics, the code is optimal for both lvalues and rvalues.
-		If an lvalue is passed in, it’s copied exactly one time, just as with a reference-to-const parameter.
+		If an lvalue is passed in, it's copied exactly one time, just as with a reference-to-const parameter.
 		And, if an rvalue is passed in, no copy is made, just as with an rvalue reference parameter."
 
 		page 305, Professional C++ by Marc Gregoire, Nicholas A. Solter, Scott Meyers

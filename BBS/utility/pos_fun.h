@@ -64,6 +64,13 @@ inline bool in_rng(type Lrng, type x, type Hrng)
 	return (x >= Lrng && x <= Hrng);
 }
 
+template<class type>
+
+inline bool in_rng_open(type Lrng, type x, type Hrng)
+{
+	return (x >= Lrng && x < Hrng);
+}
+
 
 // 1 / sqrt() very efficient O(1) [copied]
 
