@@ -38,6 +38,8 @@
 
 #include"entity_component_system/entity_component_system.h"	// general purpose entity component system
 
+#include"sfml_components/text_center_origin.h"	// center origin a sfml text
+
 #include"system/window.h"
 
 #include"system/input.h"
