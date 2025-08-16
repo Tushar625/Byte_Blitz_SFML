@@ -227,6 +227,12 @@ class bb::BUTTON
 
 	virtual bool is_cursor_on_button(float mouse_pos_x, float mouse_pos_y) const noexcept
 	{
+		/*
+			in a float system there can be points in between x + width - 1 and x + width
+			we don't know how many points are there so, we check for < x + width not
+			<= x + width - 1, same goes for y axis
+		*/
+		
 		return in_rng_open(x, mouse_pos_x, x + width) && in_rng_open(y, mouse_pos_y, y + height);
 	}
 
