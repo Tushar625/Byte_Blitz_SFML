@@ -2,8 +2,8 @@
 
 
 #include<SFML/Graphics.hpp>
-#include"../../utility/pos_fun.h"
-#include"../../system/window.h"
+#include"../../../utility/pos_fun.h"
+#include"../../../system/window.h"
 #include<vector>
 #include<string>
 #include<cctype>

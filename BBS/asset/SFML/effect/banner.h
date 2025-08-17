@@ -4,11 +4,11 @@
 
 #include <functional>
 
-#include "../../timer/timer.h"
+#include "../../../timer/timer.h"
 
-#include"../../sfml_components/text_center_origin.h"
+#include "../../../SFML_components/text_center_origin.h"
 
-#include "../../system/window.h"
+#include "../../../system/window.h"
 
 
 
@@ -252,7 +252,7 @@ public:
 
 		m_text.setString(str);	// set banner string
 
-		bb::setCenterOrigin(m_text);	// center origin the string
+		bb::textCenterOrigin(m_text);	// center origin the string
 
 		m_tween.start(
 			

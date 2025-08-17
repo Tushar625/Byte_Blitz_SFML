@@ -13,7 +13,7 @@ namespace bb
 
 // visit: https://learnsfml.com/basics/graphics/how-to-center-text/
 
-void setCenterOrigin(sf::Text& text)
+void textCenterOrigin(sf::Text& text)
 {
 	auto center = text.getGlobalBounds().getSize() / 2.f;
 	auto localBounds = center + text.getLocalBounds().getPosition();

@@ -2,7 +2,7 @@
 
 #include<SFML/Graphics.hpp>
 
-#include"../../entity_component_system/entity_component_system.h"
+#include"../../../entity_component_system/entity_component_system.h"
 
 
 namespace bb
