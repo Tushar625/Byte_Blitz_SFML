@@ -359,11 +359,13 @@ public:
 
 			// origin of the bg rectangle is at the top left corner
 
-			m_bg.setPosition(sf::Vector2f(0, m_yPos));
+			auto pos = sf::Vector2f(0, m_yPos);
+
+			m_bg.setPosition(pos);
 
 			// origin of the text is at its center, we place the text in the middle of the bg rectangle
 
-			m_text.setPosition(sf::Vector2f(m_bg.getSize().x / 2, m_yPos + m_bg.getSize().y / 2));
+			m_text.setPosition(pos + m_bg.getSize() * .5f);
 
 			m_tween.unlock();
 

@@ -9,6 +9,12 @@
 #include<cctype>
 
 
+namespace bb
+{
+	class ColorText;
+}
+
+
 /*
 	ColorText class is used to create a text object that displays each character
 	in a different color. It is useful for creating colorful text effects.
@@ -36,7 +42,7 @@
 	colorText.render();	// call this in render() of your game loop
 */
 
-class ColorText
+class bb::ColorText
 {
 
 

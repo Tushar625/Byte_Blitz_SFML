@@ -5,6 +5,9 @@
 
 
 
+namespace bb
+{
+
 /*
 	this function draws several dark colored texts at different offsets
 	around the original text, creating a shadow effect.
@@ -32,4 +35,6 @@ void textShadow(sf::Text text, const std::vector<sf::Vector2f>& offsets, const s
 
 		bb::WINDOW.draw(text);
 	}
+}
+
 }
