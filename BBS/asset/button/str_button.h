@@ -1,9 +1,9 @@
 #pragma once
 
 #include<SFML/Graphics.hpp>
-#include"../../../utility/pos_fun.h"
-#include"../../../button/button.h"
-#include"../../../system/window.h"
+#include"../../utility/pos_fun.h"
+#include"../../button/button.h"
+#include"../../system/window.h"
 #include<vector>
 #include<string>
 

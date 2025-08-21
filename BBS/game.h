@@ -40,6 +40,10 @@
 
 #include"SFML_components/text_center_origin.h"	// center origin a sfml text
 
+#include"SFML_components/rounded_rectangle_shape.h"	// sfml style rounded rectangle shape
+
+#include"SFML_components/generate_sprite_vector.h"	// sfml style rounded rectangle shape
+
 #include"system/window.h"
 
 #include"system/input.h"

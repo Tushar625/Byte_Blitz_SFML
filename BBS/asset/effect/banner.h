@@ -4,11 +4,11 @@
 
 #include <functional>
 
-#include "../../../timer/timer.h"
+#include "../../timer/timer.h"
 
-#include "../../../SFML_components/text_center_origin.h"
+#include "../../SFML_components/text_center_origin.h"
 
-#include "../../../system/window.h"
+#include "../../system/window.h"
 
 
 

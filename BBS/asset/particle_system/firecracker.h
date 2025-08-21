@@ -2,15 +2,15 @@
 
 #include<SFML/Graphics.hpp>
 
-#include"../../../entity_component_system/entity_component_system.h"
+#include"../../entity_component_system/entity_component_system.h"
 
 
 /*
-	To create the explosion in space effect,
+	To create the explosion or firecracker effect,
 
-	declare an object of SpaceExplosion class
+	declare an object of Firecracker class
 
-	SpaceExplosion explo;
+	Firecracker explo;
 
 	and call the create() with appropriate arguments to start an explosion
 
@@ -30,11 +30,11 @@
 
 namespace bb
 {
-	class SpaceExplosion;
+	class Firecracker;
 }
 
 
-class bb::SpaceExplosion : public sf::Drawable
+class bb::Firecracker : public sf::Drawable
 {
 public:
 
@@ -66,14 +66,13 @@ public:
 	}
 
 	/*
-		create a new space explosion effect at a new source point, you can also input
-		velocity of the exploding object.
+		create a new firecracker effect at a new source point
 
 		create simply increases size of internal arrays to fit more vertices
 		when all the particles disappear all the arrays are cleared
 	*/
 
-	void create(sf::Vector2f source, sf::Vector2f source_velocity, sf::Color color = sf::Color::White, int count = 1000, double span = 100, double lifeTime = 1)
+	void create(sf::Vector2f source, sf::Color color = sf::Color::White, int count = 1000, double span = 100, double lifeTime = 1)
 	{
 		// reserve space for new particles
 
@@ -111,14 +110,9 @@ public:
 
 			int velo = rand() % static_cast<int>(span * span / lifeTime * lifeTime * .35);
 
-			/*
-				getting components of the velocity and adding a random fraction of source velocity, i.e.,
-				velocity of the exploding object to it
-			*/
+			// getting components of the velocity
 
-			float factor = (rand() % 501 + 500) / 1000.0f;	// 0.5 - 1.0
-
-			particle.get<VELOCITY>() = sf::Vector2f(source_velocity.x * factor, source_velocity.y * factor) + sf::Vector2f(static_cast<float>(sin(angle) * velo), static_cast<float>(cos(angle) * velo));
+			particle.get<VELOCITY>() = sf::Vector2f(static_cast<float>(sin(angle) * velo), static_cast<float>(cos(angle) * velo));
 
 			particle.get<VERTEX>() = sf::Vertex(source, color);
 		}
@@ -152,7 +146,7 @@ public:
 				continue;
 			}
 
-			sf::Vector2f accn;
+			sf::Vector2f accn; 
 			
 			sf::Vector2f& velocity = entity.get<VELOCITY>();
 
@@ -162,15 +156,15 @@ public:
 
 			particle.color.a = static_cast<uint8_t>(alpha);
 
-			// calculating accn from velocity to simulate drag, drag coeff. is random, as it's in space
+			// calculating accn from velocity to simulate drag
 
-			accn.x = -(rand() % 21 + 10) * velocity.x;
+			accn.x = -25 * velocity.x;
 
-			accn.y = -(rand() % 21 + 10) * velocity.y;
-			
+			accn.y = -25 * velocity.y;
+
 			velocity.x += static_cast<float>(accn.x * dt);
 
-			velocity.y += static_cast<float>(accn.y * dt);
+			velocity.y += static_cast<float>(accn.y * dt + 200 * dt);	// adding downward accn to simulate gravity
 
 			particle.position.x += static_cast<float>(velocity.x * dt);
 
