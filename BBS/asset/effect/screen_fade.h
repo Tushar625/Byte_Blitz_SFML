@@ -96,7 +96,7 @@ public:
 
 
 
-	ScreenFade(const sf::Vector2f& size = { 800, 600 }) :
+	explicit ScreenFade(const sf::Vector2f& size = { 800, 600 }) :
 		m_screen(size),
 		m_color(sf::Color::White),	// default color of fade effect is white
 		m_duration(1.0),	// default duration of fade effect is 1 second

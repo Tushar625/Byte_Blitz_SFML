@@ -78,7 +78,7 @@ class bb::FPS_CONTROL
         initialize();
     }
 
-    FPS_CONTROL(double target_fps)
+    explicit FPS_CONTROL(double target_fps)
     {
         set(target_fps);
         

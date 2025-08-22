@@ -17,11 +17,36 @@ namespace bb
 
 
 
+/*
+	SFMl doesn't have a rounded rectangle shape by default, so I collected this code from the internet
+
+	Sorry, I lost the original link. I have modified it to make it more SFML-like.
+
+	It's usage is identical to SFML RectangleShape. All the methods of RectangleShape are available here,
+    along with the methods to set the radius and corner point count.
+
+    Usage:
+
+        RoundedRectangleShape rect(sf::Vector2f(100, 50));
+
+		rect.setRadius(10); // Set the radius of the corners
+
+        rect.setCornerPointCount(8); // 8 points per corner
+
+        rect.setFillColor(sf::Color::Red);
+
+        rect.setPosition(50, 50);
+
+        window.draw(rect);
+*/
+
+
+
 class bb::RoundedRectangleShape : public sf::Shape
 {
 public:
 
-    RoundedRectangleShape(const sf::Vector2f& size = sf::Vector2f(0, 0))
+    explicit RoundedRectangleShape(const sf::Vector2f& size = sf::Vector2f(0, 0))
     {
         setSize(size);
     }

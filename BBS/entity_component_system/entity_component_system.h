@@ -408,7 +408,7 @@ class bb::ENTITY_COMPONENT_SYSTEM
 		ENTITY_COMPONENT_SYSTEM &ecs;	// reference to ECS object to access ECS methods
 
 		
-		constexpr ENTITY(ENTITY_COMPONENT_SYSTEM &ecs_in, size_t id_in = 0) : ecs(ecs_in), id(id_in)
+		constexpr explicit ENTITY(ENTITY_COMPONENT_SYSTEM &ecs_in, size_t id_in = 0) : ecs(ecs_in), id(id_in)
 		{}
 
 		

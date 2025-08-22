@@ -17,17 +17,25 @@ namespace bb
 	declare an object of Exhaust class
 
 	Exhaust exhaust;
+	
+	or 
+	
+	Exhaust exhaust(1000);	// 1000 is the total no. of particles used for the simulation
+							// by default 10000 particles are used
 
-	customize the effect with the getter and setter functions, defined in
-	the class
+	customize the effect by setting the source point, direction, angle, color, spray amount,
+	span, gap and max velocity of the particles with the getter and setter functions, defined
+	in the class
 
-	and call the spray() to "spray" certain no. of particles, call it
-	repeatedly to create the exhaust effect
+	and call the spray() to "spray" certain no. of particles, as set with setSprayAmount()
+	method, call it repeatedly to create the exhaust effect
 
-	exhaust.spray();
+	exhaust.spray();	// doesn't return take any arguments
 
-	call spray() of 'exhaust' from Update() and call window.draw(exhaust) from
+	call update(dt) of 'exhaust' from Update() and call window.draw(exhaust) from
 	Render() of game loop to display the effect.
+
+	you can also delete all the particles with exhaust.clear()
 */
 
 
@@ -46,7 +54,7 @@ public:
 	}
 
 	/*
-		spray <= "m_sprayAmount" no. of particles, call this function repeatedly
+		sprays <= "m_sprayAmount" no. of particles, call this function repeatedly
 		to get a consistent spray of particles
 
 		if also recycles the deleted particles
@@ -150,7 +158,7 @@ public:
 
 	// consructor
 
-	Exhaust(uint32_t count = DEFAULT_COUNT) :
+	explicit Exhaust(uint32_t count = DEFAULT_COUNT) :
 		m_source{ 0, 0 },
 		m_direction(DEFAULT_DIRECTION),
 		m_angle(DEFAULT_ANGLE),

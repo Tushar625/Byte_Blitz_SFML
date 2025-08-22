@@ -511,7 +511,7 @@ public:
 		page 305, Professional C++ by Marc Gregoire, Nicholas A. Solter, Scott Meyers
 	*/
 
-	MENU(std::vector<BUTTON_TYPE> _button_list) :
+	explicit MENU(std::vector<BUTTON_TYPE> _button_list) :
 		button_list(std::move(_button_list)),
 		bindex(0)	// select the first button
 	{}
