@@ -1,0 +1,74 @@
+Cause of having a naming convension:
+
+	To make it easy for the user to remember names used in this game engine.
+
+	To increase readability of the source codes of both the game engine and games made with it.
+
+Follow these rules Strictly:
+
+	While naming functions, macros, variables etc, in the game engine, which will be used by external users.
+	
+	(Optional) While naming internal variables, functions, macros etc which will not be used by external users,
+	for the sake of readability.
+
+Rules:
+
+	Each name is made of one or more words connected by '_', no. of words must be minimum (eg coord2d, dist2d is better
+	than coord_2d, dist_2d).
+	
+	Cammel case is not allowed, the name can be in either uppercase or lowercase, with a few exception.
+
+	Following things are named in lowercase:
+
+		All variables and objects.
+		All datatype names except classes & enums.
+		Function names.
+		Names of the macros that will be used as funtion names.
+		Header file names.
+
+	Following things are named in uppercase (generally):
+
+		All macros
+		Enum and class names.
+		Enum values.
+		Pre-defined objects (Eg: "INPUT" object in "BBS\system\input.h").
+
+	Some special names (these names doesn't follow any rules):
+
+		The words, "BBS" and "SFML", if added to a folder name, must remain in uppercase.
+
+		The special class providing classless interface for making games is callled, 'Game'.
+
+		Special functions:
+
+			Functions of game loop:
+
+				Create
+				Input
+				Update
+				Clear
+				Render
+				Print
+				Destroy
+
+			Functions of STATE_MACHINE class:
+
+				Enter
+				Update
+				Render
+				Exit
+
+			Some functions of BUTTON class:
+
+				Update
+				Render
+				ORDINARY_STATE
+				HOVERING_STATE
+				CLICK_STATE
+
+	Final rule:
+
+		Class names cannot have the word "CLASS" in it, if the class isn't used to create a predefined object.
+
+		Name of the classes of Pre-defined objects will be generated as [name of predefined object]_CLASS. Eg,
+		WINDOW will be an object of WINDOW_CLASS.

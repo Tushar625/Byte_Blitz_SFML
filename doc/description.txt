@@ -10,74 +10,110 @@ affecting others.
 instead of “module”]
 
 Before, talking about folders in details I want to mention that entry point of the game engine
-is “game.h” header file in root or Byte_Blitz_SFML folder; I include all the necessary header
-files in it so, to create a game with this game engine you need to include only this header
-file into the source code (More about its usage is mentioned in the documentation inside it).
-
-[****[I recommand you to use Visual Studio 2022 to make games using this game engine. I have found
-that the debugger provided with Visual Studio 2022 is very good at detecting Segmentation Faults in
-the application you make, without it Segmentation Faults are very difficult to detect and will
-waste a ton of your time. You don't have to do anything spacial, just run the application with
-debugger after you build it and if any Segmentation Faults occurr debugger will detect it,
-display what is causing it and stop execution of the application]****]
+is “game.h” header file in BBS folder; I include all the game engine header files except the
+asset (not all game needs all assets) and utility (used by other game engine modules, and rarely
+by a agme) in it, so, to create a game with this game engine you need to include only this header
+file and other asset and utility header files into the source code as needed.
 
 Now I describe each folder:
+
+================================================
+Core part of the game engine written in pure c++
+================================================
 
 game_loop:
 
 It holds game_loop.h header file that provides the basic game loop, which is the heart of this
-game engine. game_loop.h contains a class that has the game loop defined in it. The game
-loop can be started by calling a member function. This class must have several virtual functions
-to create, update, render the game which are called by the game loop to run the game. The game
-loop runs at a certain fps, which can be changed using a method in the class. The source code
-of the game is supposed to inherit this class and override the virtual methods to change their
-behaviour as required for the game.
+game engine. game_loop.h contains a class that has the game loop defined in it. The game loop
+can be started by calling a member function. This class have several virtual functions to create,
+update, render the game which are called by the game loop to run the game. The game loop runs at
+a certain fps, which can be changed using a method in the class. The source code of the game is
+supposed to inherit this class and override the virtual methods like update(), render(), clear()
+etc to create the game.
 
 button:
 
-It holds a header file that describes a general purpose button and a list of buttons more like a menu
-list. (this header file contains a detailed description of itself)
+It holds a header file that defines classes to make general purpose buttons and menu with these
+buttons.
 
 state_machine:
 
 It holds a header file that describes several general purpose classes to implement an object oriented
-statemachine in a game. (this header file contains a detailed description of itself)
+statemachine in a game.
 
 utility:
 
 It contains several general purpose header files which are used by all other folders in this game engine.
 
-[
-	Afore said folders are core part of the game engine and they are written in pure c++ i.e., doesn't
-	contain any platform dependent codes.
+entity_component_system:
 
-	Only the system folder mentioned below contains all the platform dependent code used in this game
-	engine and helps to seperate the general purpose codes from the platform dependent ones properly.
+It's a fast and efficient way to handle large no. of entities to the game. With this system, it's very
+easy to add update and remove similar entities like (particles, bullets) to the game.
 
-	This way to make this game engine work on different platforms I only have to redefine the system
-	folder, rest of the game engine remains same, unaffected.
-]
+!!!! we need a 2nd ecs with simpler entity addition and deletion system, probably store the available
+entity indices in a stack or queue, the entities won't be as well packed as they are now, so speed will
+be slightly less, but it will be easy to operate (add or remove entities), good when we don't need
+extremely large amount of entities.
+
+timer:
+
+It contains timer.h header file, which defines several asynchronous timer classes, useful for running
+a function at specific intervals, tweening values over a range of time, asynchronously using multithreading.
+
+===============
+SFML extentions
+===============
+
+SFML_components:
+
+Each header files in this folder, defines a new SFML feature, like Rounded Rectangle Shape, SFML text
+centering etc. These features are made with SFML and std C++, to expand capabilities of SFML. They are
+not dependent on any parts of this game engine or any other library, they are completely stand-alone.
+
+=================
+System components
+=================
 
 system:
 
-This is the only platform dependent folder in this game. It defines 3 header files,
+This is the only module of this game engine that can have platform dependent codes,
 
-one to manipulate the window.
+Main purpose of this module is to provide means to access and manipulate the game
+window, take inputs and do other platform dependent tasks like storing save files
+into appdata folder etc.
 
-one to defines the output system of this game engine.
+It currently provides,
 
-last one extends the general purpose graphics system of this game engine, adds some
-platform dependent codes to it and makes it usable.
+bb::WINDOW object, to access and manipulate the game window.
 
-[
-	At the end i want to mention the special purpose folders
-]
+bb::INPUT object, to easily accept keyboard and mouse inputs while the game window
+is focused.
+
+A few fucntions to store and retrieve game data from windows "appdata/local" folder.
+
+==========
+The assets
+==========
 
 asset:
 
-Contains some header files, with some experimental classes build upon parts of this game engine.
-The header files under this folder are not included in game.h. Hence, to use them you need to
-include them seperately.
+Every good game engine comes with some predefined assets, BBS is no different.
 
-The header files in this folder are not considered to be parts of the game engine but they are
-tools made with this game engine.
+asset folder contains such predefined assets, created using other modules of BBS,
+that can be directly used in your games.
+
+These assets include,
+
+Particle System effects, like firecracker, rocket exhaust, created with the entity_component_system.
+
+Scrolling Background.
+
+Effects like fade in-out, banner, created using the asynchronous timers.
+
+Buttons that displays a string only, and a function to create menu with such buttons.
+
+etc.
+
+These assets are considered addons, not parts of the game engine, so we don't add them
+to game.h, instead user has to add the required asset header files to the game source
+code manually.
