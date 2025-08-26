@@ -26,7 +26,7 @@ namespace bb
 
 	Usage:
 
-	textShadow(myRectangle, sf::Color(0, 0, 0), sf::Vector2f{1.5, 1.5}, sf::Vector2f{1.5, 1}, sf::Vector2f{0, 1.5});
+	shadow(myRectangle, sf::Color(0, 0, 0), sf::Vector2f{1.5, 1.5}, sf::Vector2f{1.5, 1}, sf::Vector2f{0, 1.5});
 
 	bb::WINDOW.draw(myRectangle);	// actual shape is drawn last to ensure it appears on top of the shadows
 
@@ -38,7 +38,7 @@ namespace bb
 
 	Usage:
 	
-	textShadow(myText, { {1.5, 1.5}, {1.5, 1}, {0, 1.5} });
+	shadow(myText, { {1.5, 1.5}, {1.5, 1}, {0, 1.5} });
 		
 	bb::WINDOW.draw(myText);	// actual shape is drawn last to ensure it appears on top of the shadows
 
