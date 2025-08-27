@@ -10,23 +10,33 @@ To know more about how to set it up with Visual Studio 2022, check out **setup_d
 
 ## Main features:
 
- - Modular design
- - Multithreaded Game Loop (well synchronized Update and Render threads)
- - A proper State Machine
- - Buttons and Button_List to create Menus
- - AABB, Circle-AABB and Point-Polygon collision detection system
- - Floating point comparison functions
- - AABB position functions
- - Particle Systems to create Firecracker, Space Explosion and Rocket Exhaust effect
- - User friendly Input and Window management systems
- - Functions to access windows AppData folder to store and retrive game data
- - Simple Entity Component System
+ - Modular design.
+ - Multithreaded Game Loop.
+ - State Machine.
+ - Button and Menu.
+ - AABB, Circle-AABB and Point-Polygon collision detection system.
+ - Circle-AABB collision position deduction.
+ - User friendly Input and Window management systems.
+ - Functions to access windows AppData folder to store and retrive game data.
+ - Simple Entity Component System.
+ - Asynchronous Timers and tweener.
+ - Custom SFML components (Rounded Rectangle, Text Center Origin, Spritesheet texture to Sprite Vector).
+
+## Assets:
+
+ - Infinite Scrolling Background.
+ - Text Button and Menu maker.
+ - Screen Fade Transition.
+ - Banner Animation.
+ - Pixelated Shadow Effect.
+ - Particle Systems to create Firecracker, Space Explosion and Rocket Exhaust effect.
+ - Colorful Text with different color for each character, these colors can be shifted left or right.
 
 ## Upcoming features:
 
- - Proper File Management Support
- - Support for SFML3
- - proper manual discussing more about these features
+ - Proper File Management Support.
+ - Support for SFML3.
+ - proper manual discussing more about these features.
 
 ## Examples
 
@@ -39,3 +49,5 @@ Here, I demonstrate some projects I made with this game engine:
  - [BREAKOUT](https://github.com/Tushar625/BREAKOUT)
 
  - [ASTEROIDS](https://github.com/Tushar625/Asteroids)
+
+ - [MATCH 3](https://github.com/Tushar625/Match-3)
