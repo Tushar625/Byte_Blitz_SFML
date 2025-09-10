@@ -54,15 +54,24 @@ public:
 	{
 		return (
 			sizeof(sf::Vertex) * m_ecs.component<VERTEX>().capacity() +
+
+			sizeof(sf::Vector2f) * m_ecs.component<START>().capacity() +
+			
+			sizeof(sf::Vector2f) * m_ecs.component<END>().capacity() +
+
+			sizeof(double) * m_ecs.component<ELAPSED_TIME>().capacity() +
+
+			sizeof(double) * m_ecs.component<DURATION>().capacity() +
+
 			sizeof(double) * m_ecs.component<ALPHA>().capacity() +
-			sizeof(double) * m_ecs.component<DALPHA>().capacity() +
-			sizeof(sf::Vector2f) * m_ecs.component<VELOCITY>().capacity()
+
+			sizeof(double) * m_ecs.component<DALPHA>().capacity()
 		);
 	}
 
 	size_t sizeInBytes()
 	{
-		return (sizeof(sf::Vertex) + sizeof(double) + sizeof(double) + sizeof(sf::Vector2f)) * m_ecs.entity_count();
+		return (sizeof(sf::Vertex) + sizeof(sf::Vector2f) + sizeof(sf::Vector2f) + sizeof(double) + sizeof(double) + sizeof(double) + sizeof(double)) * m_ecs.entity_count();
 	}
 
 	/*
@@ -101,18 +110,26 @@ public:
 
 			double angle = (rand() % 360) * 3.14 / 180;	// 0 -> 359 degrees but in radians
 
+			// the initial and final positions of the particle
+
+			particle.get<START>() = source;
+
 			/*
-				the particles will be visible for "lifeTime" seconds and will traverse "span"
-				pixels so I thought of using "span / lifeTime" but the particles have a -ve acceleration
-				to slow them dowm so I square the "span / lifeTime" and multiply .35, this gives the
-				best results
+				getting random span < actual span and multiplying it with a number between .5 - 1
+				to properly randomized the span
 			*/
 
-			int velo = rand() % static_cast<int>(span * span / lifeTime * lifeTime * .35);
+			float rand_span = span * (rand() % 1001) / 1000.0f;	// firecracker
 
-			// getting components of the velocity
+			particle.get<END>() = source + sf::Vector2f(cosf(angle) * rand_span, sinf(angle) * rand_span);
 
-			particle.get<VELOCITY>() = sf::Vector2f(static_cast<float>(sin(angle) * velo), static_cast<float>(cos(angle) * velo));
+			// elapsed time and duration of the particle
+
+			particle.get<ELAPSED_TIME>() = 0;
+
+			particle.get<DURATION>() = lifeTime;
+
+			// the particle vertex
 
 			particle.get<VERTEX>() = sf::Vertex(source, color);
 		}
@@ -146,29 +163,29 @@ public:
 				continue;
 			}
 
-			sf::Vector2f accn; 
-			
-			sf::Vector2f& velocity = entity.get<VELOCITY>();
-
 			sf::Vertex& particle = entity.get<VERTEX>();
+
+			sf::Vector2f& start = entity.get<START>();
+
+			sf::Vector2f& end = entity.get<END>();
+
+			double& elapsed_time = entity.get<ELAPSED_TIME>();
+
+			elapsed_time += dt;
+
+			float time_ratio = elapsed_time / entity.get<DURATION>();
 
 			// updating alpha of ith particle
 
 			particle.color.a = static_cast<uint8_t>(alpha);
 
-			// calculating accn from velocity to simulate drag
+			// calculating current position
+			
+			particle.position = start + (end - start) * ((time_ratio >= 1.0f) ? 1.0f : 1.0f - powf(15.0f, -10.0f * time_ratio));
 
-			accn.x = -25 * velocity.x;
+			// adding gravity effect .5 * g * t ^ 2, (.5 * g) = 4, I found this is the best value
 
-			accn.y = -25 * velocity.y;
-
-			velocity.x += static_cast<float>(accn.x * dt);
-
-			velocity.y += static_cast<float>(accn.y * dt + 200 * dt);	// adding downward accn to simulate gravity
-
-			particle.position.x += static_cast<float>(velocity.x * dt);
-
-			particle.position.y += static_cast<float>(velocity.y * dt);
+			particle.position.y += 14 * elapsed_time * elapsed_time;	// not needed in space explosion
 
 			i++;
 		}
@@ -189,7 +206,7 @@ private:
 		}
 	}
 
-	mutable bb::ECS<sf::Vertex, double, double, sf::Vector2f>::C8 m_ecs;
+	mutable bb::ECS<sf::Vertex, sf::Vector2f, sf::Vector2f, double, double, double, double>::C8 m_ecs;
 
-	enum {VERTEX, DALPHA, ALPHA, VELOCITY};
+	enum {VERTEX, START, END, ELAPSED_TIME, DURATION, DALPHA, ALPHA};
 };

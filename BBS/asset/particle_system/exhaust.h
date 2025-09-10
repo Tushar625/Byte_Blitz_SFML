@@ -57,7 +57,7 @@ public:
 		sprays <= "m_sprayAmount" no. of particles, call this function repeatedly
 		to get a consistent spray of particles
 
-		if also recycles the deleted particles
+		it also recycles the deleted particles
 	*/
 
 	void spray() noexcept
